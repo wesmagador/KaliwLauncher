@@ -167,3 +167,11 @@ Validação: jogo real MAME 0.174 em primeiro plano, combinação de teclado inj
 
 ## Correção 0.11.2 — Tela cheia sem bordas no MAME
 O MAME nativo agora ocupa o monitor inteiro em janela sem bordas, mantendo a composição do Windows disponível para o menu rápido. O supervisor remove a barra de título e moldura somente da janela do motor criado pelo Kaliw e ajusta a área ao monitor em que ela está. Outras plataformas mantêm suas configurações. A verificação geométrica confirmou área externa e área de jogo 1920x1080, sem moldura, antes do menu rápido e após retomar a mesma sessão.
+
+
+## Versão 0.12.0 — Touchpad como apontador Wii
+Ajustes → Teclado e controles → Apontador Wii permite escolher Touchpad DualSense / DualShock 4, analógico direito ou mouse. O padrão é touchpad; salve e reinicie o jogo para aplicar. Deslize um dedo para apontar em posição absoluta; clicar no touchpad equivale ao A do Wii. Círculo continua funcionando como A no mapeamento padrão. Levantar o dedo mantém a última posição. O controle físico e a origem de entrada de cada jogador são respeitados.
+
+SDL consulta o touchpad no processo do launcher; coordenadas e clique seguem por memória compartilhada exclusiva da sessão. O núcleo RetroArch não abre outra instância SDL. O motor libera a entrada no menu rápido, desconexão ou ausência de atualizações por 500 ms. Ao encerrar a sessão, o mapeamento e o temporizador são fechados. Touchpad exige que o dispositivo real esteja acessível pelo SDL; controles virtuais XInput não fornecem a superfície de toque. Detecção do DualSense conectado confirmada; gestos físicos e conexão Bluetooth não foram validados nesta entrega.
+
+Validação: compartilhamento real entre JS e código nativo, extremos e centro das coordenadas, clique/A e liberação, quatro portas/configuração de slot, teclado isolado, posição retida, pausa, desconexão e expiração. No aplicativo foram verificados a opção de apontador, salvar/reabrir, boot de Super Mario Galaxy com bindings absolutos Pointer e funcionamento do menu rápido. Entrada de toque simulada no teste nativo; não houve manipulação física do touchpad no teste automatizado.

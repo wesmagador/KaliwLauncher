@@ -1,6 +1,7 @@
 {
   "compiler": "Zig 0.15.2, cc -O2",
   "source": [
+    "native/wii-pointer.h",
     "native/sdl-menu.h",
     "native/engine-host.c",
     "native/quick-menu.h",
@@ -15,7 +16,7 @@
     },
     {
       "file": "cores/kaliw_discbridge_libretro.dll",
-      "sha256": "6232a51d44093eebde7ba88a3df21ac1c7f1d6494f45e88abe31aa63df4cd2d5"
+      "sha256": "5a0d6902c7fa22c36636b2b2b7b3001e9b518c714fb1f8e96737db6f469dbba9"
     },
     {
       "file": "kaliw-disc-reader.exe",

@@ -14,6 +14,7 @@ static FILE *utfopen(const char*p,const wchar_t*mode){wchar_t w[32768];if(!Multi
 static void reply(const char*id,int ok,const char*msg){char tmp[32768];snprintf(tmp,sizeof(tmp),"%s.tmp",response);FILE*f=utfopen(tmp,L"wb");if(!f)return;fprintf(f,"%s\n%s\n%s",id,ok?"OK":"ERROR",msg);fclose(f);wchar_t a[32768],b[32768];MultiByteToWideChar(CP_UTF8,0,tmp,-1,a,32768);MultiByteToWideChar(CP_UTF8,0,response,-1,b,32768);MoveFileExW(a,b,MOVEFILE_REPLACE_EXISTING);}
 #define KALIW_LIBRETRO_MENU
 #include "quick-menu.h"
+#include "wii-pointer.h"
 static bool environment(unsigned cmd,void*data){if(cmd==RETRO_ENVIRONMENT_SET_DISK_CONTROL_INTERFACE||cmd==RETRO_ENVIRONMENT_SET_DISK_CONTROL_EXT_INTERFACE)memcpy(&disk,data,sizeof(disk));
  if(cmd==RETRO_ENVIRONMENT_GET_VARIABLE){struct retro_variable*v=data;static char bios[1024];if(strncmp(v->key,"swanstation_BIOS_Path",21)==0&&GetEnvironmentVariableA("KALIW_PS1_BIOS",bios,sizeof(bios))){v->value=bios;return true;}if(strcmp(v->key,"pcsx2_bios")==0&&GetEnvironmentVariableA("KALIW_PS2_BIOS",bios,sizeof(bios))){v->value=bios;return true;}}
  return frontend?frontend(cmd,data):false;}
@@ -38,13 +39,13 @@ static void poll(void){ULONGLONG now=GetTickCount64();if(close_at){if(now>=close
 #define V1(n,t,a) RETRO_API void n(t a){void(*fn)(t)=symbol(#n);if(fn)fn(a);}
 #define R0(r,n,d) RETRO_API r n(void){r(*fn)(void)=symbol(#n);return fn?fn():d;}
 RETRO_API void retro_set_environment(retro_environment_t cb){frontend=cb;void(*fn)(retro_environment_t)=symbol("retro_set_environment");if(fn)fn(environment);}
-RETRO_API void retro_init(void){wchar_t ipcw[32768];GetEnvironmentVariableW(L"KALIW_BRIDGE",ipcw,32768);WideCharToMultiByte(CP_UTF8,0,ipcw,-1,ipc,sizeof(ipc),NULL,NULL);snprintf(request,sizeof(request),"%s/request.txt",ipc);snprintf(response,sizeof(response),"%s/response.txt",ipc);void(*fn)(void)=symbol("retro_init");if(fn)fn();menu_init();}
-RETRO_API void retro_deinit(void){menu_sdl_shutdown();void(*fn)(void)=symbol("retro_deinit");if(fn)fn();}
+RETRO_API void retro_init(void){wchar_t ipcw[32768];GetEnvironmentVariableW(L"KALIW_BRIDGE",ipcw,32768);WideCharToMultiByte(CP_UTF8,0,ipcw,-1,ipc,sizeof(ipc),NULL,NULL);snprintf(request,sizeof(request),"%s/request.txt",ipc);snprintf(response,sizeof(response),"%s/response.txt",ipc);void(*fn)(void)=symbol("retro_init");if(fn)fn();menu_init();pointer_init();}
+RETRO_API void retro_deinit(void){pointer_shutdown();menu_sdl_shutdown();void(*fn)(void)=symbol("retro_deinit");if(fn)fn();}
 V0(retro_reset) V0(retro_unload_game) V0(retro_cheat_reset)
-RETRO_API void retro_run(void){static bool started=false;if(!started){void(*first)(void)=symbol("retro_run");if(first)first();started=true;}poll_menu_hotkey();poll();if(menu_paused){if(video_cb&&last_width)video_cb(NULL,last_width,last_height,last_pitch);Sleep(5);return;}void(*fn)(void)=symbol("retro_run");if(fn)fn();}
+RETRO_API void retro_run(void){pointer_refresh();static bool started=false;if(!started){void(*first)(void)=symbol("retro_run");if(first)first();started=true;}poll_menu_hotkey();poll();if(menu_paused){if(video_cb&&last_width)video_cb(NULL,last_width,last_height,last_pitch);Sleep(5);return;}void(*fn)(void)=symbol("retro_run");if(fn)fn();}
 R0(unsigned,retro_api_version,1) R0(unsigned,retro_get_region,0) R0(size_t,retro_serialize_size,0)
 V1(retro_get_system_info,struct retro_system_info*,info) V1(retro_get_system_av_info,struct retro_system_av_info*,info)
-RETRO_API void retro_set_video_refresh(retro_video_refresh_t cb){video_cb=cb;void(*fn)(retro_video_refresh_t)=symbol("retro_set_video_refresh");if(fn)fn(video_forward);} V1(retro_set_audio_sample,retro_audio_sample_t,cb) V1(retro_set_audio_sample_batch,retro_audio_sample_batch_t,cb) RETRO_API void retro_set_input_poll(retro_input_poll_t cb){menu_input_poll=cb;void(*fn)(retro_input_poll_t)=symbol("retro_set_input_poll");if(fn)fn(cb);} RETRO_API void retro_set_input_state(retro_input_state_t cb){input_cb=cb;void(*fn)(retro_input_state_t)=symbol("retro_set_input_state");if(fn)fn(input_forward);}
+RETRO_API void retro_set_video_refresh(retro_video_refresh_t cb){video_cb=cb;void(*fn)(retro_video_refresh_t)=symbol("retro_set_video_refresh");if(fn)fn(video_forward);} V1(retro_set_audio_sample,retro_audio_sample_t,cb) V1(retro_set_audio_sample_batch,retro_audio_sample_batch_t,cb) RETRO_API void retro_set_input_poll(retro_input_poll_t cb){menu_input_poll=cb;void(*fn)(retro_input_poll_t)=symbol("retro_set_input_poll");if(fn)fn(cb);} RETRO_API void retro_set_input_state(retro_input_state_t cb){input_cb=cb;void(*fn)(retro_input_state_t)=symbol("retro_set_input_state");if(fn)fn(wii_input_forward);}
 RETRO_API void retro_set_controller_port_device(unsigned p,unsigned d){void(*fn)(unsigned,unsigned)=symbol("retro_set_controller_port_device");if(fn)fn(p,d);}
 RETRO_API bool retro_load_game(const struct retro_game_info*i){bool(*fn)(const struct retro_game_info*)=symbol("retro_load_game");return fn&&fn(i);}
 RETRO_API bool retro_load_game_special(unsigned t,const struct retro_game_info*i,size_t n){bool(*fn)(unsigned,const struct retro_game_info*,size_t)=symbol("retro_load_game_special");return fn&&fn(t,i,n);}
