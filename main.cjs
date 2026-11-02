@@ -20,6 +20,8 @@ app.whenReady().then(()=>{
  win.on('close',e=>{if(session||launching){e.preventDefault();win.hide();}});
 });
 app.on('window-all-closed',()=>{if(!session)app.quit();});
+ipcMain.handle('input-snapshot',()=>require('./input-devices.cjs').snapshot());
+ipcMain.handle('input-save',(_,value)=>update(c=>{c.controls=require('./input-config.cjs').normalize(value);}));
 ipcMain.handle('read',read);
 ipcMain.handle('catalog',(_,refresh)=>refresh?online.refresh():online.list());
 ipcMain.handle('download',async(_,id)=>{await online.download(id);return {config:await read(),catalog:await online.list()};});
@@ -29,6 +31,7 @@ ipcMain.handle('import-found-bios',async(_,id)=>{if(session||launching)throw Err
 ipcMain.handle('catalog-source',async(_,id)=>shell.openExternal(online.entry(id).source));
 ipcMain.handle('bios-guide',async()=>shell.openExternal('https://pcsx2.net/docs/setup/bios/'));
 ipcMain.handle('bios',async(_,id)=>{manager.check(id);if(session||launching)throw Error('Feche o jogo antes de importar BIOS.');const r=await dialog.showOpenDialog(win,{title:'Importar sua BIOS de '+id.toUpperCase(),filters:[{name:'BIOS descompactada',extensions:['bin']}],properties:['openFile','multiSelections']});if(r.canceled)return null;await manager.importBios(id,r.filePaths);return read();});
+ipcMain.handle('select-bios',async(_,id,file)=>{manager.check(id);const state=(await manager.status())[id];if(typeof file!=='string'||file&&!state.bios.includes(file))throw Error('BIOS indisponível.');return update(c=>{c.bios={...c.bios,[id]:file};});});
 ipcMain.handle('data-folder',async()=>{const folder=path.join(app.getPath('userData'),'emulation');await fs.mkdir(folder,{recursive:true});const error=await shell.openPath(folder);if(error)throw Error(error);});
 ipcMain.handle('licenses',async()=>{const folder=path.join(manager.bundle,'licenses');const error=await shell.openPath(folder);if(error)throw Error(error);});
 ipcMain.handle('import',async(_,id)=>{manager.check(id);const r=await dialog.showOpenDialog(win,{title:'Adicionar jogos de '+id.toUpperCase(),filters:[{name:'Imagens de disco',extensions:id==='ps1'?['cue','chd','pbp','m3u','iso','bin','exe']:['iso','chd','cso','gz','elf','m3u']}],properties:['openFile','multiSelections']});if(r.canceled)return null;return update(c=>{for(const file of r.filePaths)if(!c.games.some(g=>g.path===file&&g.console===id))c.games.push({id:require('node:crypto').randomUUID(),console:id,path:file,name:path.basename(file,path.extname(file))});});});
@@ -38,7 +41,7 @@ ipcMain.handle('launch',async(_,id,gameId)=>{
  if(session||launching)throw Error('Um jogo já está em execução. Feche-o para iniciar outro.');manager.check(id);launching=true;
  try{
  const c=await raw(),game=gameId?c.games.find(g=>g.id===gameId&&g.console===id):null;if(gameId&&!game)throw Error('Jogo não encontrado');
- const launch=await manager.prepare(id,game,game?c.fullboot:true);
+ const launch=await manager.prepare(id,game,game?c.fullboot:true,c);
  await new Promise((resolve,reject)=>{
   let settled=false;const child=spawn(launch.exe,launch.args,{cwd:launch.cwd,shell:false,stdio:'ignore'});session=child;
   const timer=setTimeout(()=>{settled=true;win.minimize();resolve(true);},1500);

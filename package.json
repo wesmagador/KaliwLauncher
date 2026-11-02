@@ -1,12 +1,12 @@
 {
   "name": "kaliw-launcher",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "private": true,
-  "description": "KaliwLauncher — sua próxima dimensão de jogo",
+  "description": "KaliwLauncher \u2014 sua pr\u00f3xima dimens\u00e3o de jogo",
   "main": "main.cjs",
   "scripts": {
     "start": "electron .",
-    "check": "node --check main.cjs && node --check preload.cjs && node --check renderer.js && node --check engine-manager.cjs && node --check online-manager.cjs && node --check online-ui.js",
+    "check": "node --check main.cjs && node --check preload.cjs && node --check renderer.js && node --check engine-manager.cjs && node --check online-manager.cjs && node --check online-ui.js && node --check input-config.cjs && node --check input-devices.cjs && node --check controls-ui.js",
     "dist": "electron-builder --win portable",
     "test:engines": "node scripts/test-engines.cjs",
     "prepare:engines": "node scripts/prepare-engines.cjs && node scripts/prepare-notices.cjs && node scripts/prepare-vc-runtime.cjs",
@@ -29,7 +29,10 @@
       "engine-manager.cjs",
       "catalog.cjs",
       "online-manager.cjs",
-      "online-ui.js"
+      "online-ui.js",
+      "input-config.cjs",
+      "input-devices.cjs",
+      "controls-ui.js"
     ],
     "win": {
       "target": "portable"
@@ -41,13 +44,17 @@
         "filter": [
           "retroarch.exe",
           "*.dll",
-          "cores/*.dll",
           "autoconfig/**/*",
           "info/*.info",
           "licenses/**/*",
-          "manifest.json"
+          "manifest.json",
+          "cores/swanstation_libretro.dll",
+          "cores/pcee2_libretro.dll"
         ]
       }
     ]
+  },
+  "dependencies": {
+    "koffi": "^3.3.4"
   }
 }
