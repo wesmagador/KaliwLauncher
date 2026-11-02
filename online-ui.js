@@ -12,7 +12,7 @@ function element(tag,className,text){const e=document.createElement(tag);if(clas
 
 function hubButton(text,action,id,className='secondary'){const b=element('button',className,text);b.dataset.action=action;if(id)b.dataset.id=id;return b;}
 
-function openHub(kind){window.closeCompatibility?.();window.closeMods?.();window.closeLogs?.();if(typeof cancelCapture==='function')cancelCapture();window.scrollTo({top:0,behavior:'instant'});settingsView=false;$('settings').hidden=true;document.querySelector('.heading').hidden=false;document.querySelector('main > .eyebrow').hidden=false;hubView=kind;hubQuery='';$('catalogSearch').value='';hubFilter='all';renderHub();if(!catalogLoaded)loadCatalog(true);}
+function openHub(kind){window.closeCompatibility?.();window.closeMods?.();window.closeLogs?.();if(typeof cancelCapture==='function')cancelCapture();window.scrollTo({top:0,behavior:'instant'});settingsView=false;$('settings').hidden=true;document.querySelector('.heading').hidden=false;document.querySelector('main > .eyebrow').hidden=false;hubView=kind;hubQuery='';$('catalogSearch').value='';hubFilter='all';renderHub();if(kind==='games'&&hubMode==='library')window.focusCatalogGame?.();if(!catalogLoaded)loadCatalog(true);}
 
 async function loadCatalog(refresh=false){if(!downloadApi)return;if(checkingCatalog)return;checkingCatalog=true;$('refreshCatalog').disabled=true;$('refreshCatalog').textContent='Verificando fontes…';try{catalog=await downloadApi.catalog(refresh);catalogLoaded=true;}catch(e){toast(e.message);}finally{checkingCatalog=false;$('refreshCatalog').disabled=false;$('refreshCatalog').textContent='Verificar online ↻';if(hubView)renderHub();}}
 
@@ -71,7 +71,7 @@ function renderCatalog(){
 
  if(!entries.length)container.append(element('div','hub-empty',!platforms.length?'Nenhum motor integrado disponível neste pacote.':checkingCatalog?'Consultando as fontes…':library?'Nenhum jogo nesta seleção. Importe um jogo ou abra Descobrir jogos.':hubView==='bios'&&hubFilter==='ps2'?'PS2: importe sua BIOS. Não há firmware livre de PS2 validado neste catálogo.':'Nenhum item encontrado nesta seleção.'));
 
- if(focusKey){const target=[...container.querySelectorAll('[data-action]')].find(b=>b.dataset.action===focusKey.action&&b.dataset.id===focusKey.id&&!b.disabled);target?.focus({preventScroll:true});}
+ if(focusKey){const target=[...container.querySelectorAll('[data-action]')].find(b=>b.dataset.action===focusKey.action&&b.dataset.id===focusKey.id&&!b.disabled);if(target){if(active.classList.contains('ui-focused'))focusUi(target);else target.focus({preventScroll:true});}}
 
 }
 
@@ -116,4 +116,5 @@ downloadApi?.onProgress(progress=>{transfers.set(progress.id,progress);if(['done
 window.renderHub=renderHub;
 
 window.handleHubPad=pad=>{const modal=document.querySelector('dialog[open]'),scope=modal||$('onlineHub');const buttons=[...scope.querySelectorAll('button:not(:disabled),input,select')].filter(b=>b.getClientRects().length);const index=buttons.indexOf(document.activeElement);if(pad.buttons[1]?.pressed){if(modal)modal.close();else home();return true;}const forward=pad.buttons[15]?.pressed||pad.buttons[13]?.pressed||pad.axes[0]>.6||pad.axes[1]>.6;const backward=pad.buttons[14]?.pressed||pad.buttons[12]?.pressed||pad.axes[0]<-.6||pad.axes[1]<-.6;if((forward||backward)&&buttons.length){buttons[(index+(forward?1:-1)+buttons.length)%buttons.length].focus();return true;}if(pad.buttons[0]?.pressed){if(document.activeElement?.tagName==='BUTTON')document.activeElement.click();return true;}return false;};
+
 

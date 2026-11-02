@@ -42,3 +42,7 @@ header{position:sticky;top:0;z-index:50;background:linear-gradient(90deg,#0b110e
 @media(prefers-reduced-motion:reduce){:is(.compatibility-toolbar select,#catalogPlatform),.compatibility-toolbar input{transition:none}}
 
 .hub-toolbar #catalogPlatform{min-width:190px;min-height:48px}.hub-toolbar .hub-search{border-radius:12px}.hub-toolbar .secondary{border-radius:12px;min-height:48px}
+
+/* Programmatic gamepad focus stays visible even after the mouse was used. */
+.ui-focused{outline:2px solid var(--accent,var(--lime))!important;outline-offset:4px;box-shadow:0 0 0 5px #c5fa6612!important}
+.catalog-card:has(.ui-focused),.catalog-card:focus-within{border-color:var(--accent,var(--lime));box-shadow:0 0 0 1px var(--accent,var(--lime)),0 12px 35px #0005;background:linear-gradient(145deg,#35442b80,var(--surface))}

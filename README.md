@@ -111,3 +111,7 @@ As revisões e SHA-256 dos novos motores e fontes estão em engines/multi-manife
 
 ## Correção 0.9.3 — DualSense
 A detecção, navegação e remapeamento usam SDL2 em vez de consultar apenas XInput. O nome real do controle aparece em Ajustes. Os núcleos RetroArch também usam SDL2; configurações anteriores são traduzidas para o novo layout sem apagar os mapeamentos. DualSense: L1/R1 navegam entre abas; Options + Create abre o menu rápido por padrão. Reinicie o jogo após salvar mudanças de controle. Motores avançados continuam usando os seus perfis nativos.
+
+
+## Correção 0.9.4 — Navegação na biblioteca
+A biblioteca foca o primeiro jogo ao abrir; direcional/analógico percorre os jogos e linhas e A/✕ confirma. O foco do controle permanece visível após usar o mouse e após atualizar a lista. Os testes de interface cobrem seleção, confirmação e atualização com sessão de console aberta.
