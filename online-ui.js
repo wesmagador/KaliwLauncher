@@ -8,7 +8,7 @@ function hubButton(text,action,id,className='secondary'){const b=element('button
 function openHub(kind){hubView=kind;hubQuery='';$('catalogSearch').value='';hubFilter='all';renderHub();if(!catalogLoaded)loadCatalog(true);}
 async function loadCatalog(refresh=false){if(!downloadApi)return;if(checkingCatalog)return;checkingCatalog=true;$('refreshCatalog').disabled=true;$('refreshCatalog').textContent='Verificando fontes…';try{catalog=await downloadApi.catalog(refresh);catalogLoaded=true;}catch(e){toast(e.message);}finally{checkingCatalog=false;$('refreshCatalog').disabled=false;$('refreshCatalog').textContent='Verificar online ↻';if(hubView)renderHub();}}
 function renderHub(){
- if(!hubView)return;$('onlineHub').hidden=false;for(const id of ['shelfHeading','carousel'])$(id).hidden=true;document.querySelector('.selection').hidden=true;
+ if(!hubView)return;window.syncNavigation?.();$('onlineHub').hidden=false;for(const id of ['shelfHeading','carousel'])$(id).hidden=true;document.querySelector('.selection').hidden=true;
  $('home').classList.remove('active');$('biosNav').classList.toggle('active',hubView==='bios');$('libraryNav').classList.toggle('active',hubView==='games');$('libraryNav').disabled=false;
  document.querySelector('h1').innerHTML=hubView==='bios'?'Prepare seu<br><em>universo.</em>':'Sua próxima<br><em>aventura.</em>';
  $('subtitle').textContent=hubView==='bios'?'Encontre, escolha e instale o firmware do seu console.':'Escolha o jogo e quando baixar. O resto fica com o Kaliw.';

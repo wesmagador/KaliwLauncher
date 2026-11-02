@@ -5,7 +5,7 @@ const appearanceDefaults={theme:'kaliw',style:'coverflow',motion:'vivid'};
 let appearance={...appearanceDefaults};
 try{appearance={...appearanceDefaults,...JSON.parse(localStorage.getItem('kaliw-appearance')||'{}')};}catch{}
 if(matchMedia('(prefers-reduced-motion: reduce)').matches)appearance.motion='off';
-function applyAppearance(){for(const key of Object.keys(appearanceDefaults))document.body.dataset[key]=appearance[key];document.querySelectorAll('[data-preference]').forEach(button=>{const active=appearance[button.dataset.preference]===button.dataset.value;button.classList.toggle('chosen',active);button.setAttribute('aria-pressed',String(active));});}
+function applyAppearance(){api?.quickTheme?.(appearance.theme);for(const key of Object.keys(appearanceDefaults))document.body.dataset[key]=appearance[key];document.querySelectorAll('[data-preference]').forEach(button=>{const active=appearance[button.dataset.preference]===button.dataset.value;button.classList.toggle('chosen',active);button.setAttribute('aria-pressed',String(active));});}
 function setAppearance(key,value){appearance[key]=value;try{localStorage.setItem('kaliw-appearance',JSON.stringify(appearance));}catch{}applyAppearance();render();}
 let hubView=null;
 let config={emulators:{ps1:'',ps2:''},engines:{},games:[],fullboot:true},consoleId='ps2',view='consoles',index=0,items=[],toastTimer;
@@ -14,7 +14,7 @@ function toast(message){$('toast').textContent=message;$('toast').style.display=
 async function action(fn){try{await fn();}catch(e){toast(e.message||String(e));}}
 function selected(){return items[index];}
 function render(){
- window.renderSession?.();
+ window.syncNavigation?.();window.renderSession?.();
  if(hubView&&window.renderHub){window.renderHub();return;}
  $('onlineHub').hidden=true;for(const id of ['shelfHeading','carousel'])$(id).hidden=false;document.querySelector('.selection').hidden=false;$('biosNav').classList.remove('active');document.querySelector('h1').innerHTML='O próximo nível<br>começa <em>aqui.</em>';
  items=view==='consoles'?consoles.filter(c=>config.emulators[c.id]):config.games.filter(g=>g.console===consoleId);

@@ -29,6 +29,8 @@ Build instructions: PCEE2-README.md
 The native runtime may open a separate fullscreen window. All persistent BIOS and save data are managed under Kaliw's user-data directory, outside the application bundle.
 Core .info metadata supports_no_game is updated to true to match the bundled cores' runtime environment declaration. Core DLLs and the runtime are unmodified.
 
-Source archives for the exact revisions are delivered alongside the executable in KaliwLauncher-0.6.0-sources.zip. For external/submodule dependencies, follow the upstream build instructions and the pinned git submodule revisions in these sources; full repositories can be fetched using git clone --recursive followed by checkout of the version above and git submodule update --init --recursive.
+Source archives for the exact revisions are delivered alongside the executable in KaliwLauncher-0.7.0-sources.zip. For external/submodule dependencies, follow the upstream build instructions and the pinned git submodule revisions in these sources; full repositories can be fetched using git clone --recursive followed by checkout of the version above and git submodule update --init --recursive.
 
 Kaliw disc bridge and Windows optical reader: native/disc-bridge.c and native/disc-reader.c, MIT. The original cores and RetroArch are unchanged. The wrapper forwards the libretro ABI and dispatches disc callbacks on the emulation thread. Windows optical data is read into a temporary image. See Kaliw-disc-tools-LICENSE.txt, MinGW-runtime-COPYING.txt and the license preserved in native/libretro.h.
+
+Quick menu and libretro state serialization: native/quick-menu.h, MIT, included in the Kaliw source bundle. Core callbacks run on the emulation thread.
