@@ -18,6 +18,8 @@ class EngineManager {
 
  check(id){if(!engines[id])throw Error('Console inválido');return engines[id];}
 
+ biosExtensions(id){return id==='ps2'?['bin','rom0','rom','bios']:['bin'];}
+
  isOpenBios(data){return crypto.createHash('sha256').update(data).digest('hex')==='0a9685d9895b422f091a9bcceed8f73cf67a414c09eb8310c714f27ccdfdb349';}
 
  isBios(id,data){return id==='ps1'?data.length===524288&&(data.includes(Buffer.from('Sony Computer Entertainment'))||this.isOpenBios(data)):id==='ps2'&&data.length===4194304&&data.includes(Buffer.from('ROMDIR'))&&data.includes(Buffer.from('RESET'));}
@@ -34,7 +36,7 @@ class EngineManager {
 
  // Validate all selected images before changing the managed firmware directory.
 
- const images=[];for(const file of files){const data=await fs.readFile(file);if(!/\.bin$/i.test(file))throw Error('Importe uma BIOS descompactada no formato .bin.');
+ const images=[];for(const file of files){if(!this.biosExtensions(id).includes(path.extname(file).slice(1).toLowerCase()))throw Error(id==='ps2'?'Selecione a BIOS principal .ROM0, .bin, .rom ou .bios. ROM1, DIFF, NVM e MEC são arquivos auxiliares.':'Importe uma BIOS descompactada no formato .bin.');const stat=await fs.stat(file);if(!stat.isFile()||stat.size>(id==='ps2'?4194304:524288))throw Error('Tamanho de BIOS inválido.');const data=await fs.readFile(file);
 
  if(!this.isBios(id,data))throw Error(id==='ps1'?'Importe uma BIOS de PS1 de 512 KB ou o OpenBIOS verificado.':'A BIOS de PS2 precisa ser uma imagem válida de 4 MB.');
 

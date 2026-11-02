@@ -115,3 +115,7 @@ A detecção, navegação e remapeamento usam SDL2 em vez de consultar apenas XI
 
 ## Correção 0.9.4 — Navegação na biblioteca
 A biblioteca foca o primeiro jogo ao abrir; direcional/analógico percorre os jogos e linhas e A/✕ confirma. O foco do controle permanece visível após usar o mouse e após atualizar a lista. Os testes de interface cobrem seleção, confirmação e atualização com sessão de console aberta.
+
+
+## Correção 0.9.5 — Importação de BIOS PS2
+O seletor e a busca por pasta reconhecem .ROM0, .bin, .rom e .bios para PS2, sem diferenciar maiúsculas e minúsculas. A imagem é validada pelo conteúdo e copiada para a pasta gerenciada como .bin; o original permanece intacto. ROM1, DIFF, NVM e MEC não são tratados como a BIOS principal.
