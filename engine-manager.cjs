@@ -24,6 +24,14 @@ class EngineManager {
  images.push({name,data,label:path.basename(file)});}
  let labels={};try{labels=JSON.parse(await fs.readFile(path.join(dir,'bios-labels.json'),'utf8'));}catch{}for(const image of images){await fs.writeFile(path.join(dir,image.name),image.data);labels[image.name]=image.label;count++;}await fs.writeFile(path.join(dir,'bios-labels.json'),JSON.stringify(labels));return count;
  }
+ async removeBios(id,file){
+ this.check(id);if(typeof file!=='string'||!file||path.basename(file)!==file)throw Error('BIOS inválida.');
+ const state=(await this.status())[id];if(!state.bios.includes(file))throw Error('BIOS indisponível.');
+ const dir=id==='ps1'?this.system:path.join(this.system,'pcsx2','bios');
+ let labels={};try{labels=JSON.parse(await fs.readFile(path.join(dir,'bios-labels.json'),'utf8'));}catch(e){if(e.code!=='ENOENT')throw e;}
+ delete labels[file];await fs.writeFile(path.join(dir,'bios-labels.json'),JSON.stringify(labels));
+ await fs.unlink(path.join(dir,file));
+ }
  async prepare(id,game,fullboot,preferences={}){const engine=this.check(id);const status=(await this.status())[id];if(!status.available)throw Error('Motor integrado ausente. Use o pacote completo do Kaliw.');if(!status.bios.length)throw Error(`Importe sua BIOS de ${id.toUpperCase()} no menu BIOS antes de jogar.`);
  if(game){try{await fs.access(game.path);}catch{throw Error('O arquivo do jogo foi movido ou removido. Importe-o novamente.');}}
  const base=path.join(this.data,'sessions',id);const saves=path.join(this.data,'saves',id),states=path.join(this.data,'states',id),logs=path.join(this.data,'logs');
