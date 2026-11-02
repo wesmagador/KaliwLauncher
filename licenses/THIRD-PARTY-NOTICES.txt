@@ -1,0 +1,34 @@
+KaliwLauncher 0.6.0 — Integrated emulation
+
+The Kaliw interface is an independent frontend. Emulation is provided by the unmodified open-source programs below, included in this package. It is not an original PS1/PS2 emulation implementation. No Sony BIOS, firmware or games are included.
+
+RetroArch
+Repository: https://github.com/libretro/RetroArch
+Version/commit: v1.22.2
+Exact source archive: https://codeload.github.com/libretro/RetroArch/zip/v1.22.2
+Archive SHA-256: 6964adf2fc7cffbf0710ba0486ae8d505a0c7f6497e11fcc0f5dedb5dfc87824
+License: RetroArch-COPYING
+Build instructions: RetroArch-README.md
+
+SwanStation
+Repository: https://github.com/libretro/swanstation
+Version/commit: 631f0fb31b809e0f889d7c551fe695788e39c1d3
+Exact source archive: https://codeload.github.com/libretro/swanstation/zip/631f0fb31b809e0f889d7c551fe695788e39c1d3
+Archive SHA-256: 241f074d494e311e4e32a63e0e90bf80a8ef0c1ee57f7ce1841a4dc73bfb2e56
+License: SwanStation-LICENSE
+Build instructions: SwanStation-README.md
+
+PCEE2
+Repository: https://github.com/WizzardSK/pcee2-libretro
+Version/commit: f52b5a6fe43278dcfc827b85b09fced5a82f863f
+Exact source archive: https://codeload.github.com/WizzardSK/pcee2-libretro/zip/f52b5a6fe43278dcfc827b85b09fced5a82f863f
+Archive SHA-256: 70da3655d1b5be53f38c68ff382bb03fc73dc3c7679e090bc1c0f210a1a3d759
+License: PCEE2-COPYING.GPLv3
+Build instructions: PCEE2-README.md
+
+The native runtime may open a separate fullscreen window. All persistent BIOS and save data are managed under Kaliw's user-data directory, outside the application bundle.
+Core .info metadata supports_no_game is updated to true to match the bundled cores' runtime environment declaration. Core DLLs and the runtime are unmodified.
+
+Source archives for the exact revisions are delivered alongside the executable in KaliwLauncher-0.6.0-sources.zip. For external/submodule dependencies, follow the upstream build instructions and the pinned git submodule revisions in these sources; full repositories can be fetched using git clone --recursive followed by checkout of the version above and git submodule update --init --recursive.
+
+Kaliw disc bridge and Windows optical reader: native/disc-bridge.c and native/disc-reader.c, MIT. The original cores and RetroArch are unchanged. The wrapper forwards the libretro ABI and dispatches disc callbacks on the emulation thread. Windows optical data is read into a temporary image. See Kaliw-disc-tools-LICENSE.txt, MinGW-runtime-COPYING.txt and the license preserved in native/libretro.h.

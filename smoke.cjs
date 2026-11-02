@@ -19,7 +19,7 @@ app.whenReady().then(async()=>{
  assert(document.querySelectorAll('.card').length===2,'Two unique console covers');
  const first=$('carousel').querySelector('[data-key="consoles:ps2"]');
  move(1);assert(first===$('carousel').querySelector('[data-key="consoles:ps2"]'),'Card retained for transitions');
- move(-1);enter();assert(selected().empty,'Empty game library');
+ move(-1);assert($('home').textContent==='Consoles','Consoles label');assert($('enter').textContent==='Iniciar console →','Consoles starts boot');assert($('bios').hidden,'Duplicate boot button hidden');
  home();settings();
  document.querySelector('[data-preference="theme"][data-value="neon"]').click();
  assert(document.body.dataset.theme==='neon','Live theme');
@@ -40,6 +40,7 @@ app.whenReady().then(async()=>{
  await new Promise(resolve=>setTimeout(resolve,450));
  await fs.writeFile(path.join(__dirname,'artifacts','KaliwLauncher-downloads.png'),(await win.webContents.capturePage()).toPNG());
  await win.webContents.executeJavaScript(`settings();$('configureControls').click();`);await new Promise(r=>setTimeout(r,300));await fs.writeFile(path.join(__dirname,'artifacts','KaliwLauncher-controls.png'),(await win.webContents.capturePage()).toPNG());await win.webContents.executeJavaScript(`$('controlsDialog').close();$('settings').close();openHub('bios');`);await new Promise(r=>setTimeout(r,300));await fs.writeFile(path.join(__dirname,'artifacts','KaliwLauncher-bios.png'),(await win.webContents.capturePage()).toPNG());
+ await win.webContents.executeJavaScript(`config.session={console:'ps1',mode:'boot',bios:'openbios.bin'};home();renderSession();`);await new Promise(r=>setTimeout(r,300));await fs.writeFile(path.join(__dirname,'artifacts','KaliwLauncher-session.png'),(await win.webContents.capturePage()).toPNG());
  if(errors.length)throw Error(errors.join('\n'));await fs.writeFile(path.join(__dirname,'artifacts','smoke-result.json'),JSON.stringify({passed:true,checks:['configured-consoles','unique-covers','retained-cards','themes','layouts','motion','persisted-preferences']}));app.exit(0);
  }catch(e){console.error(e);app.exit(1);}
 });

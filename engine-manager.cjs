@@ -30,6 +30,7 @@ class EngineManager {
  const dir=id==='ps1'?this.system:path.join(this.system,'pcsx2','bios');
  let labels={};try{labels=JSON.parse(await fs.readFile(path.join(dir,'bios-labels.json'),'utf8'));}catch(e){if(e.code!=='ENOENT')throw e;}
  delete labels[file];await fs.writeFile(path.join(dir,'bios-labels.json'),JSON.stringify(labels));
+ if(id==='ps1'){const alias=path.join(this.data,'sessions','ps1','firmware','psxonpsp660.bin');try{const [staged,original]=await Promise.all([fs.readFile(alias),fs.readFile(path.join(dir,file))]);if(staged.equals(original))await fs.unlink(alias);}catch(e){if(e.code!=='ENOENT')throw e;}}
  await fs.unlink(path.join(dir,file));
  }
  async prepare(id,game,fullboot,preferences={}){const engine=this.check(id);const status=(await this.status())[id];if(!status.available)throw Error('Motor integrado ausente. Use o pacote completo do Kaliw.');if(!status.bios.length)throw Error(`Importe sua BIOS de ${id.toUpperCase()} no menu BIOS antes de jogar.`);
@@ -38,6 +39,10 @@ class EngineManager {
  for(const dir of [base,saves,states,logs,path.join(this.system,'pcsx2','memcards'),path.join(this.system,'pcsx2','cheats'),path.join(this.data,'cache')])await fs.mkdir(dir,{recursive:true});
  const chosen=preferences.bios?.[id]||'';
  if(chosen&&!status.bios.includes(chosen))throw Error('A BIOS selecionada não está disponível. Escolha outra no menu BIOS.');
+ let system=this.system;const env={KALIW_PS1_BIOS:'',KALIW_PS2_BIOS:'',KALIW_CORE:path.join(this.bundle,'cores',engine.file),KALIW_BRIDGE:path.join(base,'ipc-'+crypto.randomUUID())};
+ if(id==='ps1'&&chosen){system=path.join(base,'firmware');await fs.mkdir(system,{recursive:true});await fs.copyFile(path.join(this.system,chosen),path.join(system,'psxonpsp660.bin'));env.KALIW_PS1_BIOS='psxonpsp660.bin';}
+ if(id==='ps2'&&chosen)env.KALIW_PS2_BIOS=chosen;
+ await fs.mkdir(env.KALIW_BRIDGE,{recursive:true});
  const optionsPath=path.join(base,'core-options.cfg');
  const controls=require('./input-config.cjs').generate(preferences.controls,id);
  const opts=[...controls.options,line('swanstation_BIOS_PatchFastBoot',fullboot?'false':'true'),line('swanstation_GPU_Renderer','Software'),line('pcsx2_renderer','opengl'),line('pcsx2_fast_boot',fullboot?'disabled':'enabled'),line('pcsx2_bios',chosen||status.bios[0])];
@@ -45,14 +50,14 @@ class EngineManager {
  // contents, rather than forcing the first imported image on every region.
  const ps1Bios=(await this.status()).ps1.bios;
  const onlyOpenBios=ps1Bios.length===1&&ps1Bios[0]==='openbios.bin';
- for(const region of ['NTSCJ','NTSCU','PAL'])opts.push(line('swanstation_BIOS_Path'+region,id==='ps1'&&chosen?chosen:onlyOpenBios?'openbios.bin':''));
+ for(const region of ['NTSCJ','NTSCU','PAL'])opts.push(line('swanstation_BIOS_Path'+region,id==='ps1'&&chosen?'psxonpsp660.bin':onlyOpenBios?'openbios.bin':region==='NTSCJ'?'scph5500.bin':region==='NTSCU'?'scph5501.bin':'scph5502.bin'));
  await fs.writeFile(optionsPath,opts.join('\n')+'\n');
- const cfg=[line('system_directory',this.system),line('savefile_directory',saves),line('savestate_directory',states),line('cache_directory',path.join(this.data,'cache')),line('core_options_path',optionsPath),line('global_core_options',true),line('game_specific_options',false),line('libretro_info_path',path.join(this.bundle,'info')),line('joypad_autoconfig_dir',path.join(this.bundle,'autoconfig')),
- line('video_driver',id==='ps2'?'glcore':'gl'),line('audio_driver','wasapi'),line('input_driver','dinput'),line('input_joypad_driver','xinput'),line('video_fullscreen',true),line('video_windowed_fullscreen',true),line('video_vsync',true),line('video_shader_enable',false),line('config_save_on_exit',false),line('savefiles_in_content_dir',false),line('savestates_in_content_dir',false),line('sort_savefiles_enable',true),line('sort_savestates_enable',true),line('autosave_interval',10),line('savestate_auto_save',true),line('savestate_auto_load',false),line('log_verbosity',true),line('menu_driver','rgui'),line('menu_show_online_updater',false),line('menu_show_load_content',false),line('menu_show_load_core',false),line('menu_show_quit_retroarch',true),line('menu_enable_widgets',false),line('video_font_enable',true),line('pause_nonactive',true),line('quit_press_twice',false),line('ui_companion_enable',false),line('history_list_enable',false),line('core_info_cache_enable',false),line('input_remapping_directory',path.join(this.data,'remaps')),line('playlist_directory',path.join(this.data,'playlists')),line('quit_on_close_content',true),line('input_exit_emulator','escape'),line('input_menu_toggle','f1'),line('input_save_state','f2'),line('input_load_state','f4'),line('input_toggle_fast_forward','nul'),...controls.cfg];
+ const cfg=[line('system_directory',system),line('savefile_directory',saves),line('savestate_directory',states),line('cache_directory',path.join(this.data,'cache')),line('core_options_path',optionsPath),line('global_core_options',true),line('game_specific_options',false),line('libretro_info_path',path.join(this.bundle,'info')),line('joypad_autoconfig_dir',path.join(this.bundle,'autoconfig')),
+ line('video_driver',id==='ps2'?'glcore':'gl'),line('audio_driver','wasapi'),line('input_driver','dinput'),line('input_joypad_driver','xinput'),line('video_fullscreen',true),line('video_windowed_fullscreen',true),line('video_vsync',true),line('video_shader_enable',false),line('config_save_on_exit',false),line('savefiles_in_content_dir',false),line('savestates_in_content_dir',false),line('sort_savefiles_enable',true),line('sort_savestates_enable',true),line('autosave_interval',10),line('savestate_auto_save',true),line('savestate_auto_load',false),line('log_verbosity',true),line('menu_driver','rgui'),line('menu_show_online_updater',false),line('menu_show_load_content',false),line('menu_show_load_core',false),line('menu_show_quit_retroarch',true),line('menu_enable_widgets',false),line('video_font_enable',true),line('pause_nonactive',false),line('menu_pause_libretro',false),line('quit_press_twice',false),line('ui_companion_enable',false),line('history_list_enable',false),line('core_info_cache_enable',false),line('input_remapping_directory',path.join(this.data,'remaps')),line('playlist_directory',path.join(this.data,'playlists')),line('quit_on_close_content',1),line('load_dummy_on_core_shutdown',false),line('input_exit_emulator','escape'),line('input_menu_toggle','f1'),line('input_save_state','f2'),line('input_load_state','f4'),line('input_toggle_fast_forward','nul'),...controls.cfg];
  const configPath=path.join(base,'retroarch.cfg');await fs.writeFile(configPath,cfg.join('\n')+'\n');
  const log=path.join(logs,`${id}-${Date.now()}.log`);
- const args=['--config',configPath,'--verbose','--log-file',log,'--fullscreen','-L',path.join(this.bundle,'cores',engine.file)];if(game)args.push(game.path);
- return {exe:path.join(this.bundle,'retroarch.exe'),args,cwd:this.bundle,log};
+ const args=['--config',configPath,'--verbose','--log-file',log,'--fullscreen','-L',path.join(this.bundle,'cores','kaliw_discbridge_libretro.dll')];if(game)args.push(game.path);
+ return {exe:path.join(this.bundle,'retroarch.exe'),args,cwd:this.bundle,log,env,bridge:env.KALIW_BRIDGE,bios:chosen||'auto'};
  }
 }
 module.exports={EngineManager};

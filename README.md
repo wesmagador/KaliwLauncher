@@ -1,10 +1,10 @@
-# KaliwLauncher 0.5.1
+# KaliwLauncher 0.6.0
 
 Aplicativo portátil para Windows x64 com interface Kaliw e emulação integrada de PlayStation e PlayStation 2. Não é necessário instalar PCSX2, DuckStation ou RetroArch separadamente.
 
 ## Testar
 
-Abra `dist/KaliwLauncher 0.5.1.exe`. No menu **BIOS**, importe suas BIOS descompactadas: PS1 em `.bin` de 512 KB, PS2 em `.bin` de 4 MB. Na aba BIOS, também é possível escolher o download do OpenBIOS livre para PS1; ele possui abertura própria e compatibilidade variável. Os arquivos são copiados para os dados do Kaliw. A validação inicial verifica tamanho e assinaturas; a identificação final de uma BIOS compatível é feita pelo núcleo. Use BIOS da região dos jogos para o boot completo.
+Abra `dist/KaliwLauncher 0.6.0.exe`. No menu **BIOS**, importe suas BIOS descompactadas: PS1 em `.bin` de 512 KB, PS2 em `.bin` de 4 MB. Na aba BIOS, também é possível escolher o download do OpenBIOS livre para PS1; ele possui abertura própria e compatibilidade variável. Os arquivos são copiados para os dados do Kaliw. A validação inicial verifica tamanho e assinaturas; a identificação final de uma BIOS compatível é feita pelo núcleo. Use BIOS da região dos jogos para o boot completo.
 
 Escolha o console, adicione seus jogos e selecione **Jogar agora**. Para PS1 com faixas BIN, importe o CUE correspondente. Os jogos permanecem na pasta original. O botão **Boot do console** inicia sem disco. **Exibir boot original antes dos jogos** controla o boot completo.
 
@@ -22,7 +22,7 @@ Os quatro temas, dois estilos de carrossel e níveis de animação continuam dis
 
 Runtime: RetroArch 1.22.2. PS1: SwanStation 1.0.0, commit `631f0fb31b809e0f889d7c551fe695788e39c1d3`. PS2: PCEE2 v2.9.138 (derivado de PCSX2), commit `f52b5a6fe43278dcfc827b85b09fced5a82f863f`. Bibliotecas de suporte C++ Microsoft incluídas localmente. Créditos e textos de licença em **Ajustes → Créditos**. As DLLs dos núcleos e o runtime não foram modificados; o metadado `supports_no_game` foi alinhado à declaração efetiva dos núcleos.
 
-`dist/KaliwLauncher-0.5.1-sources.zip` contém o código Kaliw e arquivos-fonte das revisões dos projetos utilizados. Veja os READMEs e submódulos upstream para compilar esses projetos. O manifesto em `engines/manifest.json` registra URLs e SHA-256 dos pacotes utilizados. A preparação falha se os pacotes upstream mudarem de hash, exigindo revisão explícita de uma nova revisão.
+`dist/KaliwLauncher-0.6.0-sources.zip` contém o código Kaliw e arquivos-fonte das revisões dos projetos utilizados. Veja os READMEs e submódulos upstream para compilar esses projetos. O manifesto em `engines/manifest.json` registra URLs e SHA-256 dos pacotes utilizados. A preparação falha se os pacotes upstream mudarem de hash, exigindo revisão explícita de uma nova revisão.
 
 ## Desenvolvimento
 
@@ -60,3 +60,17 @@ Validados geração de configurações dos quatro jogadores, isolamento de entra
 ## Alterações 0.5.1
 
 No menu BIOS, cada imagem instalada possui Apagar BIOS, com confirmação. A exclusão remove somente a cópia gerenciada pelo Kaliw; os arquivos originais, jogos e saves são preservados. Se a BIOS escolhida for apagada, o console volta para seleção automática. A remoção fica bloqueada enquanto um jogo está iniciando ou executando.
+
+## Alterações 0.6.0
+
+Consoles inicia diretamente o boot sem disco. Jogos abre Minha biblioteca. Com o mesmo console aberto, Jogar agora insere o disco na sessão em execução, sem reiniciar o processo. A faixa do console oferece voltar à janela, inserir imagem local, reiniciar com a BIOS escolhida e encerrar. O PS1 também permite abrir a bandeja. Arquivos executáveis ELF/EXE e playlists não são CDs inseríveis. Para BIN, um CUE com o mesmo nome é preferido quando disponível.
+
+A BIOS de PS1 escolhida é copiada para uma pasta de sessão com um nome reconhecido pelo motor, e os parâmetros são fixados pela ponte nativa. Os nomes gerenciados não dependem mais de uma opção enumerada incompatível. PS2 também recebe a BIOS escolhida explicitamente. A faixa mostra BIOS em uso e avisa quando a seleção foi alterada para o próximo reinício.
+
+Leitor CD/DVD identifica unidades ópticas Windows, inclusive USB que o Windows apresente como CD-ROM. A operação lê o disco para um cache temporário antes da emulação (não é streaming direto do leitor). CDs são preparados como BIN/CUE com as faixas do TOC; DVDs ISO 9660 são preparados como ISO. A mídia permanece somente para leitura. Há progresso e cancelamento. O cache da sessão é removido após encerramento normal; leituras interrompidas são limpas. Jogos incompatíveis, discos protegidos ou danificados e alguns leitores podem não funcionar. Não houve unidade física disponível para validar o hardware real.
+
+A ponte nativa MIT usa os callbacks libretro do motor na própria thread de emulação para abrir, selecionar e fechar a bandeja. O processo e a memória da sessão são preservados na inserção. As DLLs originais dos motores e o RetroArch permanecem intactos. Ferramentas nativas: `native/disc-bridge.c`, `native/disc-reader.c` e `native/libretro.h`; compile com `npm run build:disc-tools`, usando Zig 0.15.2. Defina KALIW_ZIG se ele estiver fora de `.build-runtime/toolchain/zig-x86_64-windows-0.15.2/zig.exe`. O script registra hashes e copia licenças do runtime C.
+
+Validação 0.6: boot Sony PS1 local, inserção do Tetrade no mesmo PID e tela inicial do jogo; alternância entre Sony/OpenBIOS com duas BIOS presentes; encerramento e reinício limpos pelo launcher; navegação Consoles/Jogos; enumeração óptica, validação e cancelamento. O teste usa a BIOS local apenas em pastas privadas de teste; nenhuma BIOS Sony é distribuída. Boot/inserção PS2 com BIOS real e leitura física ainda precisam de validação com o hardware do usuário.
+
+O pacote portátil usa uma pasta de extração por abertura. O aplicativo permite uma instância por pasta de dados; abrir novamente traz o launcher existente para frente.
