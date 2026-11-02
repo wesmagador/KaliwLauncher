@@ -2,6 +2,8 @@ const {app,BrowserWindow,ipcMain,dialog,shell,net}=require('electron');
 app.commandLine.appendSwitch('autoplay-policy','no-user-gesture-required');
 
 const fs=require('node:fs/promises');
+const {StorageLayout,installedRoot}=require('./storage-layout.cjs');
+let storageLayout;try{const root=app.isPackaged?installedRoot(process.execPath):null;if(root){storageLayout=new StorageLayout(root).initialize();app.setPath('userData',storageLayout.userData);app.setPath('sessionData',storageLayout.userData);}}catch(error){dialog.showErrorBox('Pasta de dados do Kaliw',error.message);app.exit(1);throw error;}
 
 const path=require('node:path');
 
@@ -35,7 +37,7 @@ let saveQueue=Promise.resolve();
 
 function update(change){const task=saveQueue.then(async()=>{const c=await raw();await change(c);await fs.mkdir(app.getPath('userData'),{recursive:true});await fs.writeFile(configPath()+'.tmp',JSON.stringify(c,null,2));await fs.rename(configPath()+'.tmp',configPath());return read();});saveQueue=task.catch(()=>{});return task;}
 
-let gameImporter;function imports(){return gameImporter||(gameImporter=new (require('./game-import-manager.cjs').GameImportManager)(manager.data,manager.bundle,progress=>{if(win&&!win.isDestroyed())win.webContents.send('import-progress',progress);}));}
+let gameImporter;function imports(){return gameImporter||(gameImporter=new (require('./game-import-manager.cjs').GameImportManager)(manager.data,manager.bundle,progress=>{if(win&&!win.isDestroyed())win.webContents.send('import-progress',progress);},storageLayout));}
 async function addImportedGames(id,files){const prepared=await imports().resolve(id,files,(await raw()).games);return update(c=>{for(const entry of prepared){const found=c.games.find(g=>g.console===id&&(g.path===entry.path||entry.gameKey&&g.gameKey===entry.gameKey));if(found)Object.assign(found,entry);else c.games.push({id:crypto.randomUUID(),...entry});}});}
 const primaryInstance=app.requestSingleInstanceLock();
 
@@ -45,13 +47,13 @@ app.on('second-instance',()=>{if(win&&!win.isDestroyed()){win.show();win.restore
 
 if(primaryInstance)app.whenReady().then(()=>{
 
- manager=new EngineManager(app.isPackaged?path.join(process.resourcesPath,'engines'):path.join(__dirname,'engines'),path.join(app.getPath('userData'),'emulation'));
+ manager=new EngineManager(app.isPackaged?path.join(process.resourcesPath,'engines'):path.join(__dirname,'engines'),storageLayout?.data||path.join(app.getPath('userData'),'emulation'),storageLayout);
 
  optical=new OpticalReader(manager.bundle,manager.data,event=>{if(win&&!win.isDestroyed())win.webContents.send('optical-progress',event);});
 
  quickMenu=new QuickMenuManager({theme:()=>currentTheme,session:()=>sessionInfo,ready:()=>!launching,stateFile:quickStateFile,shortcuts:()=>currentShortcuts,focus:()=>session?optical.focus(session.enginePid||session.pid):null,stop:()=>stopFromMenu(),restart:()=>restartFromMenu(),games:async()=>{const c=await raw();return c.games.filter(g=>g.console===sessionInfo?.console).map(g=>({id:g.id,name:g.name,current:g.path===sessionContent}));},selectGame:id=>selectQuickGame(id),onError:error=>{if(win&&!win.isDestroyed())win.webContents.send('quick-error',error.message);}});
 
- online=new OnlineManager({data:manager.data,engines:manager,fetcher:(url,options)=>net.fetch(url,options),install:async(entry,file)=>{if(entry.kind==='bios'){if(session||launching)throw Error('Feche o jogo para instalar a BIOS.');await manager.importBios(entry.console,[file]);}else await update(c=>{if(!c.games.some(g=>g.catalogId===entry.id||g.path===file))c.games.push({id:require('node:crypto').randomUUID(),catalogId:entry.id,console:entry.console,path:file,name:entry.name});});},onProgress:progress=>{if(win&&!win.isDestroyed())win.webContents.send('download-progress',progress);}});
+ online=new OnlineManager({data:manager.data,engines:manager,fetcher:(url,options)=>net.fetch(url,options),install:async(entry,file)=>{if(entry.kind==='bios'){if(session||launching)throw Error('Feche o jogo para instalar a BIOS.');await manager.importBios(entry.console,[file]);}else {const games=await imports().resolve(entry.console,[file],(await raw()).games);await update(c=>{if(!c.games.some(g=>g.catalogId===entry.id))for(const game of games)c.games.push({id:crypto.randomUUID(),...game,catalogId:entry.id,name:entry.name});});}},onProgress:progress=>{if(win&&!win.isDestroyed())win.webContents.send('download-progress',progress);}});
 
  win=new BrowserWindow({width:1440,height:900,minWidth:1000,minHeight:680,backgroundColor:'#0a0c10',autoHideMenuBar:true,webPreferences:{preload:path.join(__dirname,'preload.cjs'),contextIsolation:true,nodeIntegration:false,sandbox:true}});
 
@@ -99,7 +101,7 @@ ipcMain.handle('remove-bios',async(_,id,file)=>{
 
 });
 
-ipcMain.handle('data-folder',async()=>{const folder=path.join(app.getPath('userData'),'emulation');await fs.mkdir(folder,{recursive:true});const error=await shell.openPath(folder);if(error)throw Error(error);});
+ipcMain.handle('data-folder',async()=>{const folder=storageLayout?.root||path.join(app.getPath('userData'),'emulation');await fs.mkdir(folder,{recursive:true});const error=await shell.openPath(folder);if(error)throw Error(error);});
 
 ipcMain.handle('licenses',async()=>{const folder=path.join(manager.bundle,'licenses');const error=await shell.openPath(folder);if(error)throw Error(error);});
 
@@ -163,12 +165,12 @@ ipcMain.handle('optical-play',async(_,id,drive)=>{manager.check(id);if(launching
 
 ipcMain.handle('save-video',async(_,buffer)=>{const r=await dialog.showSaveDialog(win,{defaultPath:'Kaliw-boot.webm',filters:[{name:'Vídeo WebM',extensions:['webm']}]});if(r.canceled)return false;await fs.writeFile(r.filePath,Buffer.from(buffer));return true;});
 
-ipcMain.handle('browse-files',(_,folder,id,kind)=>{const engine=manager.check(id);if(!['game','bios','insert','folder','support'].includes(kind))throw Error('Operação inválida.');return require('./file-browser.cjs').browse(folder,kind==='support'?(engine.supportExtensions||require('./optional-firmware.cjs').extensions(id)):kind==='bios'?manager.biosExtensions(id):kind==='folder'?[]:engine.extensions);});
-ipcMain.handle('import-files',async(_,id,files,kind)=>{const engine=manager.check(id);if(!['game','bios','insert','support'].includes(kind))throw Error('Operação inválida.');const paths=await require('./file-browser.cjs').validateFiles(files,kind==='support'?(engine.supportExtensions||require('./optional-firmware.cjs').extensions(id)):kind==='bios'?manager.biosExtensions(id):engine.extensions);if(kind==='support'){if(session||launching)throw Error('Feche o motor atual para importar firmware.');if(id==='ps3'){if(paths.length!==1)throw Error('Selecione um arquivo PUP.');const head=await fs.open(paths[0],'r');try{const b=Buffer.alloc(8);await head.read(b,0,8,0);if(b.toString('ascii',0,4)!=='SCEU')throw Error('Arquivo PUP inválido.');}finally{await head.close();}launching=true;try{await startCore(id,null,await raw(),{firmware:paths[0]});return read();}finally{launching=false;}}if(engine.modern)await manager.modern.importSupport(id,paths);else await require('./optional-firmware.cjs').importOptional(manager.system,id,paths);return read();}if(kind==='bios'){if(session||launching)throw Error('Feche o jogo antes de importar BIOS.');await manager.importBios(id,paths);return read();}if(kind==='insert'&&(!sessionInfo||sessionInfo.console!==id||launching||!engine.disc))throw Error('Abra o console e aguarde antes de inserir um disco.');let game;if(kind==='game'){return addImportedGames(id,paths);}await update(c=>{for(const file of paths){game=c.games.find(g=>g.path===file&&g.console===id);if(!game){game={id:crypto.randomUUID(),console:id,path:file,name:path.basename(file,path.extname(file))};c.games.push(game);}}});if(kind==='insert'){launching=true;try{await insertDisc(id,game);}finally{launching=false;}}return read();});
+ipcMain.handle('browse-files',(_,folder,id,kind)=>{const engine=manager.check(id);if(!['game','bios','insert','folder','support'].includes(kind))throw Error('Operação inválida.');return require('./file-browser.cjs').browse(folder||(storageLayout?(kind==='game'||kind==='insert'?storageLayout.games(id):storageLayout.bios(id)):folder),kind==='support'?(engine.supportExtensions||require('./optional-firmware.cjs').extensions(id)):kind==='bios'?manager.biosExtensions(id):kind==='folder'?[]:engine.extensions);});
+ipcMain.handle('import-files',async(_,id,files,kind)=>{const engine=manager.check(id);if(!['game','bios','insert','support'].includes(kind))throw Error('Operação inválida.');const paths=await require('./file-browser.cjs').validateFiles(files,kind==='support'?(engine.supportExtensions||require('./optional-firmware.cjs').extensions(id)):kind==='bios'?manager.biosExtensions(id):engine.extensions);if(kind==='support'){if(session||launching)throw Error('Feche o motor atual para importar firmware.');if(id==='ps3'){if(paths.length!==1)throw Error('Selecione um arquivo PUP.');const head=await fs.open(paths[0],'r');try{const b=Buffer.alloc(8);await head.read(b,0,8,0);if(b.toString('ascii',0,4)!=='SCEU')throw Error('Arquivo PUP inválido.');}finally{await head.close();}launching=true;try{let firmware=paths[0];if(storageLayout){firmware=require('node:path').join(storageLayout.bios(id),require('node:path').basename(paths[0]));if(require('node:path').resolve(firmware)!==require('node:path').resolve(paths[0]))await fs.copyFile(paths[0],firmware);}await startCore(id,null,await raw(),{firmware});return read();}finally{launching=false;}}if(engine.modern){await manager.modern.importSupport(id,paths);if(storageLayout)for(const file of paths){const dest=path.join(storageLayout.bios(id),path.basename(file));if(path.resolve(file)!==path.resolve(dest))await fs.copyFile(file,dest);}}else await require('./optional-firmware.cjs').importOptional(manager.systemFor(id),id,paths);return read();}if(kind==='bios'){if(session||launching)throw Error('Feche o jogo antes de importar BIOS.');await manager.importBios(id,paths);return read();}if(kind==='insert'&&(!sessionInfo||sessionInfo.console!==id||launching||!engine.disc))throw Error('Abra o console e aguarde antes de inserir um disco.');let game;if(kind==='game'){return addImportedGames(id,paths);}await update(c=>{for(const file of paths){game=c.games.find(g=>g.path===file&&g.console===id);if(!game){game={id:crypto.randomUUID(),console:id,path:file,name:path.basename(file,path.extname(file))};c.games.push(game);}}});if(kind==='insert'){launching=true;try{await insertDisc(id,game);}finally{launching=false;}}return read();});
 ipcMain.handle('scan-folder',async(_,folder)=>online.scan(require('./file-browser.cjs').localPath(folder)));
 
 ipcMain.handle('modern-configure',async(_,id)=>{if(!manager.check(id).modern)throw Error('Motor inválido.');if(session||launching)throw Error('Encerre o motor atual antes de configurar outro.');launching=true;try{return await startCore(id,null,await raw(),{configure:true});}finally{launching=false;}});
-ipcMain.handle('remove-optional',async(_,id,file)=>{if(session||launching)throw Error('Feche o jogo antes de apagar firmware.');await require('./optional-firmware.cjs').removeOptional(manager.system,id,file);return read();});
+ipcMain.handle('remove-optional',async(_,id,file)=>{if(session||launching)throw Error('Feche o jogo antes de apagar firmware.');await require('./optional-firmware.cjs').removeOptional(manager.systemFor(id),id,file);return read();});
 ipcMain.handle('firmware-guide',(_,id)=>{const urls={ps3:'https://www.playstation.com/en-us/support/hardware/ps3/system-software/',ps4:'https://www.shadps4.net/quickstart/',switch:'https://eden-emu.dev/getting-started/',x360:'https://github.com/xenia-canary/xenia-canary/wiki/Quickstart'};if(!urls[id])throw Error('Guia indisponível.');return shell.openExternal(urls[id]);});
 
 ipcMain.handle('compatibility',(_,query)=>require('./compatibility-manager.cjs').list(app.isPackaged?process.resourcesPath:__dirname,query));
@@ -181,7 +183,7 @@ ipcMain.handle('mods-import',async(_,id)=>{const game=(await raw()).games.find(g
 ipcMain.handle('mods-remove',(_,id)=>modsManager().remove(id));
 ipcMain.handle('mods-apply',async(_,id)=>{const row=(await modsManager().list()).find(r=>r.id===id),game=(await raw()).games.find(g=>g.id===row?.gameId);if(!game)throw Error('Jogo original indisponível.');const copy=await modsManager().apply(id,game);return update(c=>{if(!c.games.some(g=>g.path===copy.path))c.games.push({id:crypto.randomUUID(),console:game.console,path:copy.path,name:copy.name,modId:id,baseSHA256:copy.baseSHA256});});});
 
-ipcMain.handle('logs',(_,query)=>require('./logs-manager.cjs').logs(manager.data,query));
+ipcMain.handle('logs',(_,query)=>require('./logs-manager.cjs').logs(manager.data,query,storageLayout?['ps3','ps4','x360','switch'].map(id=>path.join(storageLayout.console(id),'Motor')):[]));
 
 app.on('will-quit',()=>require('./input-devices.cjs').dispose());
 

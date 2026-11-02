@@ -14,8 +14,10 @@ const line = (key,value) => `${key} = ${quote(value)}`;
 
 class EngineManager {
 
- constructor(bundle,data){this.bundle=bundle;this.data=data;this.system=path.join(data,'system');this.arcade=new (require('./arcade-manager.cjs').ArcadeManager)(bundle,data);this.modern=new (require('./modern-manager.cjs').ModernManager)(bundle,data);}
+ constructor(bundle,data,layout=null){this.bundle=bundle;this.data=data;this.layout=layout;this.system=path.join(data,'system');this.arcade=new (require('./arcade-manager.cjs').ArcadeManager)(bundle,data);this.modern=new (require('./modern-manager.cjs').ModernManager)(bundle,data,layout);}
 
+ systemFor(id){return this.layout&&id!=='ps2'?this.layout.bios(id):this.system;}
+ biosDirectory(id){return this.layout?this.layout.bios(id):id==='ps1'?this.system:path.join(this.system,'pcsx2','bios');}
  check(id){if(!engines[id])throw Error('Console inválido');return engines[id];}
 
  biosExtensions(id){return id==='ps2'?['bin','rom0','rom','bios']:['bin'];}
@@ -26,13 +28,13 @@ class EngineManager {
 
  async status(){const result={};for(const [id,engine] of Object.entries(engines)){if(engine.modern){result[id]=await this.modern.status(id);continue;}let available=true;for(const f of ['retroarch.exe',path.join('cores',engine.file)]){try{await fs.access(path.join(this.bundle,f));}catch{available=false;}}
 
- const dir=id==='ps1'?this.system:path.join(this.system,'pcsx2','bios');let bios=[];if(engine.bios)try{bios=(await fs.readdir(dir)).filter(f=>/\.bin$/i.test(f));}catch{}
+ const dir=this.biosDirectory(id);let bios=[];if(engine.bios)try{bios=(await fs.readdir(dir)).filter(f=>/\.bin$/i.test(f));}catch{}
 
  let biosLabels={};try{biosLabels=JSON.parse(await fs.readFile(path.join(dir,'bios-labels.json'),'utf8'));}catch{}
 
- result[id]={name:engine.name,available,bios,biosLabels,optionalFirmware:await require('./optional-firmware.cjs').files(this.system,id),optionalFirmwareInfo:await require('./optional-firmware.cjs').info(this.system,id),requiresBios:!!engine.bios,boot:!!engine.boot,disc:!!engine.disc,saveStates:!engine.noStates};}return result;}
+ result[id]={name:engine.name,available,bios,biosLabels,optionalFirmware:await require('./optional-firmware.cjs').files(this.systemFor(id),id),optionalFirmwareInfo:await require('./optional-firmware.cjs').info(this.systemFor(id),id),requiresBios:!!engine.bios,boot:!!engine.boot,disc:!!engine.disc,saveStates:!engine.noStates};}return result;}
 
- async importBios(id,files){if(!this.check(id).bios)throw Error('Esta plataforma não usa importação de BIOS.');const dir=id==='ps1'?this.system:path.join(this.system,'pcsx2','bios');await fs.mkdir(dir,{recursive:true});let count=0;
+ async importBios(id,files){if(!this.check(id).bios)throw Error('Esta plataforma não usa importação de BIOS.');const dir=this.biosDirectory(id);await fs.mkdir(dir,{recursive:true});let count=0;
 
  // Validate all selected images before changing the managed firmware directory.
 
@@ -54,7 +56,7 @@ class EngineManager {
 
  const state=(await this.status())[id];if(!state.bios.includes(file))throw Error('BIOS indisponível.');
 
- const dir=id==='ps1'?this.system:path.join(this.system,'pcsx2','bios');
+ const dir=this.biosDirectory(id);
 
  let labels={};try{labels=JSON.parse(await fs.readFile(path.join(dir,'bios-labels.json'),'utf8'));}catch(e){if(e.code!=='ENOENT')throw e;}
 
@@ -70,7 +72,7 @@ class EngineManager {
 
  if(!game&&!engine.boot)throw Error('Escolha um jogo desta plataforma na aba Jogos.');
 
- if(id==='wii'){await require('./bundled-assets.cjs').prepareDolphin(this.bundle,this.system);}
+ if(id==='wii'){await require('./bundled-assets.cjs').prepareDolphin(this.bundle,this.systemFor(id));}
 
  if(game){try{await fs.access(game.path);}catch{throw Error('O arquivo do jogo foi movido ou removido. Importe-o novamente.');}}
 
@@ -82,9 +84,9 @@ class EngineManager {
 
  if(chosen&&!status.bios.includes(chosen))throw Error('A BIOS selecionada não está disponível. Escolha outra no menu BIOS.');
 
- let system=this.system;const env={KALIW_PS1_BIOS:'',KALIW_PS2_BIOS:'',KALIW_CORE:arcade?.core||path.join(this.bundle,'cores',engine.file),KALIW_BRIDGE:path.join(base,'ipc-'+crypto.randomUUID())};
+ let system=this.systemFor(id);const env={KALIW_PS1_BIOS:'',KALIW_PS2_BIOS:'',KALIW_CORE:arcade?.core||path.join(this.bundle,'cores',engine.file),KALIW_BRIDGE:path.join(base,'ipc-'+crypto.randomUUID())};
 
- if(id==='ps1'&&chosen){system=path.join(base,'firmware');await fs.mkdir(system,{recursive:true});await fs.copyFile(path.join(this.system,chosen),path.join(system,'psxonpsp660.bin'));env.KALIW_PS1_BIOS='psxonpsp660.bin';}
+ if(id==='ps1'&&chosen){system=path.join(base,'firmware');await fs.mkdir(system,{recursive:true});await fs.copyFile(path.join(this.biosDirectory(id),chosen),path.join(system,'psxonpsp660.bin'));env.KALIW_PS1_BIOS='psxonpsp660.bin';}
 
  if(id==='ps2'&&chosen)env.KALIW_PS2_BIOS=chosen;
 
@@ -99,7 +101,7 @@ class EngineManager {
  const controls=require('./input-config.cjs').generate(preferences.controls,id);
 
  const wiiDevice=({remote:'upright',sideways:'sideways',nunchuk:'nunchuk',classic:'classic',motion:'motionplus_nunchuk'})[require('./input-config.cjs').normalize(preferences.controls).wiiType];
- const opts=[...controls.options,line('dolphin_ir_mode',require('./input-config.cjs').normalize(preferences.controls).wiiPointer==='stick'?'1':'2'),line('dolphin_wiimote_default_device',wiiDevice),line('dolphin_bluetooth_passthrough','disabled'),line('dolphin_alt_gc_ports_on_wii','disabled'),line('dolphin_save_load_settings','disabled'),line('gambatte_gb_bootloader','enabled'),line('mgba_use_bios','ON'),line('gearsystem_bios_sms',(await require('./optional-firmware.cjs').files(this.system,'sms')).length?'Enabled':'Disabled'),line('mupen64plus-rdp-plugin','gliden64'),line('dolphin_cpu_core','JIT64'),line('dolphin_renderer','Hardware'),line('swanstation_BIOS_PatchFastBoot',fullboot?'false':'true'),line('swanstation_GPU_Renderer','Software'),line('pcsx2_renderer','vulkan'),line('pcsx2_gsdump_trigger','disabled'),line('pcsx2_fast_boot',fullboot?'disabled':'enabled'),line('pcsx2_bios',chosen||status.bios[0])];
+ const opts=[...controls.options,line('dolphin_ir_mode',require('./input-config.cjs').normalize(preferences.controls).wiiPointer==='stick'?'1':'2'),line('dolphin_wiimote_default_device',wiiDevice),line('dolphin_bluetooth_passthrough','disabled'),line('dolphin_alt_gc_ports_on_wii','disabled'),line('dolphin_save_load_settings','disabled'),line('gambatte_gb_bootloader','enabled'),line('mgba_use_bios','ON'),line('gearsystem_bios_sms',(await require('./optional-firmware.cjs').files(this.systemFor('sms'),'sms')).length?'Enabled':'Disabled'),line('mupen64plus-rdp-plugin','gliden64'),line('dolphin_cpu_core','JIT64'),line('dolphin_renderer','Hardware'),line('swanstation_BIOS_PatchFastBoot',fullboot?'false':'true'),line('swanstation_GPU_Renderer','Software'),line('pcsx2_renderer','vulkan'),line('pcsx2_gsdump_trigger','disabled'),line('pcsx2_fast_boot',fullboot?'disabled':'enabled'),line('pcsx2_bios',chosen||status.bios[0])];
 
  // Empty region overrides let SwanStation identify the correct BIOS by its
 

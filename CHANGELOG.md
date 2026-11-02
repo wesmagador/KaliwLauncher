@@ -2,6 +2,16 @@
 
 Notas recuperadas dos READMEs arquivados e, quando indicado, da comparação dos códigos preservados. Os executáveis antigos não foram recompilados.
 
+## 0.15.0 — Instalador e pasta de dados por plataforma
+
+- Instalador Windows x64 guiado em português, com escolha da pasta do programa e da pasta de dados, atalhos e desinstalador.
+- Estrutura mínima de BIOS e Jogos para as 15 plataformas; biblioteca, preferências, saves, estados e logs usam a pasta escolhida.
+- Importações de jogos criam cópias gerenciadas, incluindo os arquivos referenciados por CUE/M3U e as pastas de jogos extraídos. Arquivos originais permanecem intactos.
+- Pastas de dados existentes do instalador podem ser reutilizadas. Instalar novamente ou desinstalar preserva jogos, BIOS, saves e preferências.
+- O modo portátil continua usando a pasta de dados anterior quando não há configuração do instalador. Não há migração automática dos dados antigos.
+
+[Release](https://github.com/wesmagador/KaliwLauncher/releases/tag/v0.15.0)
+
 ## 0.14.0 — Sons da interface
 
 A abertura do Kaliw tem um toque original sintetizado, e os menus têm efeitos curtos para navegar, confirmar e voltar. Mouse, teclado e controle usam o mesmo conjunto de sons, incluindo o menu rápido. A navegação tem intervalo mínimo entre efeitos para evitar sons duplicados por foco/clique. Atualizações automáticas de listas não devem produzir sons de foco.

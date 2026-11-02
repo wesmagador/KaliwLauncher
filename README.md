@@ -1,12 +1,24 @@
-# KaliwLauncher 0.14.0
+# KaliwLauncher 0.15.0
 
-Aplicativo portátil para Windows x64 com interface Kaliw e motores de emulação incluídos. Não é necessário instalar os emuladores separadamente. As notas abaixo registram a evolução do projeto; consulte as seções mais recentes para o comportamento atual.
+Aplicativo para Windows x64 com interface Kaliw e motores de emulação incluídos. Não é necessário instalar os emuladores separadamente. As notas abaixo registram a evolução do projeto; consulte as seções mais recentes para o comportamento atual.
 
 ## Downloads e conteúdo do repositório
 
-Baixe o executável portátil e o pacote de fontes na [release 0.14.0](https://github.com/wesmagador/KaliwLauncher/releases/tag/v0.14.0). Feche versões anteriores antes de abrir o novo executável.
+Baixe o instalador e as fontes na [release 0.15.0](https://github.com/wesmagador/KaliwLauncher/releases/tag/v0.15.0). A [release 0.14.0](https://github.com/wesmagador/KaliwLauncher/releases/tag/v0.14.0) mantém a edição portátil anterior. Feche versões anteriores antes de instalar ou abrir o aplicativo.
 
 As mudanças de cada versão estão no [histórico de versões](CHANGELOG.md). As [releases anteriores](https://github.com/wesmagador/KaliwLauncher/releases) preservam os executáveis originais e seus pacotes de fontes.
+
+### Instalador para Windows
+
+`dist/KaliwLauncher-Setup-0.15.0.exe` oferece instalação guiada em português, escolha da pasta do programa e uma página separada para a pasta de dados. Cria atalhos na Área de Trabalho e no Menu Iniciar, com desinstalação pelas configurações de aplicativos do Windows.
+
+A pasta de dados recebe `Emuladores/<plataforma>/BIOS` e `Emuladores/<plataforma>/Jogos` para cada uma das 15 plataformas integradas. `Sistema/Launcher` guarda biblioteca e preferências; `Sistema/emulation` guarda sessões, saves, estados, downloads e logs. Motores avançados extraídos ficam em `Emuladores/<plataforma>/Motor`. A aplicação usa essa pasta desde a primeira abertura, sem importar automaticamente os dados de versões portáteis antigas.
+
+Na instalação, selecione uma pasta vazia ou uma pasta já criada por este instalador. Reinstalações e desinstalações preservam os dados; a pasta do programa deve ficar separada da pasta de dados. Jogos importados pela biblioteca são copiados para a pasta da plataforma, incluindo faixas referenciadas por CUE e discos de playlists M3U. Mantenha essas referências relativas e dentro da pasta do jogo. Jogos já colocados nessa pasta são registrados diretamente. A remoção da biblioteca não apaga os arquivos copiados. Não são fornecidos jogos, BIOS ou chaves.
+
+Para gerar o instalador: `npm run dist:installer`. Para gerar o portátil: `npm run dist`. Ambos usam os mesmos motores e recursos preparados em `engines/`.
+
+Instalação silenciosa para administração/testes: `KaliwLauncher-Setup-0.15.0.exe /S /currentuser /DATA="D:\KaliwDados" /D=C:\Apps\KaliwLauncher`. O argumento `/D` deve ser o último. A opção `/DATA` é obrigatória no modo silencioso. O caminho da pasta de dados fica em `kaliw-storage.ini` junto ao programa. A instalação não altera os arquivos originais importados.
 
 Este repositório contém o código do launcher, ferramentas nativas, testes, vídeo original, catálogo de compatibilidade e metadados/licenças dos motores. Os binários dos motores, dependências instaladas, extrações temporárias e pacotes de distribuição ficam fora do Git. O pacote de fontes da release também inclui as fontes de terceiros preparadas para esta distribuição. Jogos comerciais, BIOS proprietárias, chaves, saves e dados pessoais não são distribuídos.
 
