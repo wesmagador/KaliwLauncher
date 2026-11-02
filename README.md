@@ -127,3 +127,7 @@ PS2 usa Vulkan no frontend e no núcleo PCEE2, substituindo OpenGL que falhava a
 
 ## Versão 0.9.7 — Jogos no menu rápido
 Escolher jogo abre a biblioteca da plataforma ativa sobre o console pausado. Direcional/analógico e setas percorrem a lista; A/✕ ou Enter escolhem; B/Círculo ou Esc retornam ao menu sem fechar o console. PS1 e PS2 inserem o disco na sessão atual; outras plataformas reiniciam a sessão com o jogo escolhido. Arquivos removidos geram mensagem e a lista vazia orienta importar pelo launcher. Testes incluem inserção real de disco PS2 com identidade de sessão preservada e troca de jogo NES com retomada.
+
+
+## Correção 0.9.8 — Erro de memória ao fechar PS2
+O menu libretro usa os callbacks de entrada do frontend, eliminando a segunda abertura SDL no processo do RetroArch. O encerramento PS2 foi reproduzido com STATUS_HEAP_CORRUPTION (0xC0000374) na configuração anterior; com a mudança, o teste de boot retorna código zero. Mantidos DualSense via SDL2 no frontend, atalhos remapeáveis e a lista do menu rápido. Testados select/start, gatilhos e quatro portas via callback, boot real PS2 e inserção de disco. Mensagens de encerramento agora identificam o motor, código e aba Logs.

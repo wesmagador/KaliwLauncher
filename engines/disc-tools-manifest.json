@@ -11,11 +11,11 @@
   "artifacts": [
     {
       "file": "kaliw-engine-host.exe",
-      "sha256": "30a524f825320f334bc93997cfe266e358e12c5c1021618469298e80d36e1d1c"
+      "sha256": "0cf60dd2c49244958f1d165f7ea1157c9937058a918e0b1b4a71cee87d84a1a1"
     },
     {
       "file": "cores/kaliw_discbridge_libretro.dll",
-      "sha256": "4bcc8c1b8cff5160fe006cd24f5d70d5fa8df76fd84df1bd6a9a25e96b24e226"
+      "sha256": "6232a51d44093eebde7ba88a3df21ac1c7f1d6494f45e88abe31aa63df4cd2d5"
     },
     {
       "file": "kaliw-disc-reader.exe",
