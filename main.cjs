@@ -46,7 +46,7 @@ if(primaryInstance)app.whenReady().then(()=>{
 
  optical=new OpticalReader(manager.bundle,manager.data,event=>{if(win&&!win.isDestroyed())win.webContents.send('optical-progress',event);});
 
- quickMenu=new QuickMenuManager({theme:()=>currentTheme,session:()=>sessionInfo,ready:()=>!launching,stateFile:quickStateFile,shortcuts:()=>currentShortcuts,focus:()=>session?optical.focus(session.enginePid||session.pid):null,stop:()=>stopFromMenu(),restart:()=>restartFromMenu(),onError:error=>{if(win&&!win.isDestroyed())win.webContents.send('quick-error',error.message);}});
+ quickMenu=new QuickMenuManager({theme:()=>currentTheme,session:()=>sessionInfo,ready:()=>!launching,stateFile:quickStateFile,shortcuts:()=>currentShortcuts,focus:()=>session?optical.focus(session.enginePid||session.pid):null,stop:()=>stopFromMenu(),restart:()=>restartFromMenu(),games:async()=>{const c=await raw();return c.games.filter(g=>g.console===sessionInfo?.console).map(g=>({id:g.id,name:g.name,current:g.path===sessionContent}));},selectGame:id=>selectQuickGame(id),onError:error=>{if(win&&!win.isDestroyed())win.webContents.send('quick-error',error.message);}});
 
  online=new OnlineManager({data:manager.data,engines:manager,fetcher:(url,options)=>net.fetch(url,options),install:async(entry,file)=>{if(entry.kind==='bios'){if(session||launching)throw Error('Feche o jogo para instalar a BIOS.');await manager.importBios(entry.console,[file]);}else await update(c=>{if(!c.games.some(g=>g.catalogId===entry.id||g.path===file))c.games.push({id:require('node:crypto').randomUUID(),catalogId:entry.id,console:entry.console,path:file,name:entry.name});});},onProgress:progress=>{if(win&&!win.isDestroyed())win.webContents.send('download-progress',progress);}});
 
@@ -181,3 +181,7 @@ ipcMain.handle('mods-apply',async(_,id)=>{const row=(await modsManager().list())
 ipcMain.handle('logs',(_,query)=>require('./logs-manager.cjs').logs(manager.data,query));
 
 app.on('will-quit',()=>require('./input-devices.cjs').dispose());
+
+async function selectQuickGame(gameId){if(launching||!sessionInfo)throw Error('Aguarde a operação atual do console.');launching=true;const id=sessionInfo.console;try{await saveQueue;const c=await raw(),game=c.games.find(g=>g.id===gameId&&g.console===id);if(!game)throw Error('Jogo indisponível nesta plataforma.');await fs.access(game.path).catch(()=>{throw Error('O arquivo foi movido ou removido. Importe novamente na biblioteca.');});if(manager.check(id).disc)return await insertDisc(id,game);await stopCore();return await startCore(id,game,c);}finally{launching=false;}}
+ipcMain.handle('quick-library',()=>quickMenu.games());
+ipcMain.handle('quick-game',(_,id)=>quickMenu.selectGame(id));

@@ -123,3 +123,7 @@ O seletor e a busca por pasta reconhecem .ROM0, .bin, .rom e .bios para PS2, sem
 
 ## Correção 0.9.6 — Tela preta no PS2
 PS2 usa Vulkan no frontend e no núcleo PCEE2, substituindo OpenGL que falhava ao criar contexto compartilhado WGL. O boot foi validado com BIOS do usuário em perfil isolado e imagem da tela de seleção de idioma. A sessão PS2 usa diretório de trabalho persistente para NVRAM/MEC. Logs priorizam o nível declarado pelo motor antes de estimar pelo texto.
+
+
+## Versão 0.9.7 — Jogos no menu rápido
+Escolher jogo abre a biblioteca da plataforma ativa sobre o console pausado. Direcional/analógico e setas percorrem a lista; A/✕ ou Enter escolhem; B/Círculo ou Esc retornam ao menu sem fechar o console. PS1 e PS2 inserem o disco na sessão atual; outras plataformas reiniciam a sessão com o jogo escolhido. Arquivos removidos geram mensagem e a lista vazia orienta importar pelo launcher. Testes incluem inserção real de disco PS2 com identidade de sessão preservada e troca de jogo NES com retomada.
