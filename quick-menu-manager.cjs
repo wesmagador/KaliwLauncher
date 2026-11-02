@@ -1,16 +1,32 @@
 const {BrowserWindow,screen}=require('electron');const fs=require('node:fs/promises');const path=require('node:path');
+
 class QuickMenuManager{
+
  constructor(options){this.options=options;this.window=null;this.wanted=false;this.opening=false;this.busy=false;this.timer=null;this.lastEvent='';this.bridge=null;}
+
  attach(bridge){this.detach();this.bridge=bridge;let reading=false;this.timer=setInterval(async()=>{if(reading)return;reading=true;try{const text=await fs.readFile(path.join(bridge.dir,'menu-event.txt'),'utf8'),[id,action,bounds]=text.split('\n');if(this.bridge!==bridge||id===this.lastEvent)return;this.lastEvent=id;if(action==='OPEN'){const [x,y,width,height]=(bounds||'').split(' ').map(Number);await this.open(true,{x,y,width,height});}else if(action==='CLOSE'){await this.close(false);await this.options.focus();}}catch(e){if(e.code!=='ENOENT'&&this.bridge===bridge)this.options.onError?.(e);}finally{reading=false;}},60);}
+
  detach(){clearInterval(this.timer);this.timer=null;this.bridge=null;this.lastEvent='';this.wanted=false;if(this.window&&!this.window.isDestroyed())this.window.hide();}
- async state(){const session=this.options.session();let saved=null;if(session){try{const stat=await fs.stat(await this.options.stateFile());saved={modified:stat.mtime.toISOString(),bytes:stat.size};}catch(e){if(e.code!=='ENOENT')throw e;}}return {visible:!!(this.window&&!this.window.isDestroyed()&&this.window.isVisible()),session,saved,shortcuts:this.options.shortcuts(),busy:this.busy,theme:this.options.theme?.()||'kaliw'};}
+
+ async state(){const session=this.options.session();let saved=null;if(session&&session.saveStates!==false){try{const stat=await fs.stat(await this.options.stateFile());saved={modified:stat.mtime.toISOString(),bytes:stat.size};}catch(e){if(e.code!=='ENOENT')throw e;}}return {visible:!!(this.window&&!this.window.isDestroyed()&&this.window.isVisible()),session,saved,shortcuts:this.options.shortcuts(),busy:this.busy,theme:this.options.theme?.()||'kaliw'};}
+
  async open(alreadyPaused=false,rect=null){if(!this.options.session()||!this.bridge)return;if(!this.options.ready()){if(alreadyPaused)await this.bridge.command('RESUME');return;}if(this.opening)return;this.opening=true;this.wanted=true;try{if(!alreadyPaused)await this.bridge.command('PAUSE');if(!this.wanted||!this.options.session())return;
+
  const display=rect&&Number.isFinite(rect.x)&&Number.isFinite(rect.y)&&rect.width>0&&rect.height>0?screen.getDisplayMatching(rect):screen.getPrimaryDisplay();
+
  if(!this.window||this.window.isDestroyed()){const window=new BrowserWindow({show:false,frame:false,transparent:true,backgroundColor:'#00000000',alwaysOnTop:true,skipTaskbar:true,resizable:false,movable:false,hasShadow:false,bounds:display.bounds,webPreferences:{preload:path.join(__dirname,'quick-preload.cjs'),contextIsolation:true,nodeIntegration:false,sandbox:true,backgroundThrottling:false}});this.window=window;window.webContents.setWindowOpenHandler(()=>({action:'deny'}));window.webContents.on('will-navigate',event=>event.preventDefault());window.on('close',event=>{if(this.options.session()){event.preventDefault();this.close(true).catch(e=>this.options.onError?.(e));}});await window.loadFile(path.join(__dirname,'quick-menu.html'));}
+
  if(!this.wanted||!this.options.session())return;await this.bridge.command('OVERLAY',this.window.getNativeWindowHandle().readBigUInt64LE(0).toString());this.window.setBounds(display.bounds);this.window.webContents.send('quick-changed',await this.state());this.window.show();this.window.focus();await this.bridge.command('FOCUS_MENU');
+
  }catch(e){this.wanted=false;if(this.bridge)await this.bridge.command('RESUME').catch(()=>{});throw e;}finally{this.opening=false;}}
+
  async close(resume=true){this.wanted=false;if(this.window&&!this.window.isDestroyed())this.window.hide();if(resume&&this.bridge&&!this.bridge.closed&&this.options.session()){await this.bridge.command('RESUME');await this.options.focus();}}
- async command(action){if(this.busy)throw Error('Aguarde a operação atual.');if(!this.options.session()||!this.bridge)throw Error('O console foi encerrado.');if(!['resume','save','load','restart','exit'].includes(action))throw Error('Opção inválida.');this.busy=true;try{if(action==='resume'){await this.close(true);return {resumed:true};}if(action==='save'||action==='load'){const file=await this.options.stateFile();await fs.mkdir(path.dirname(file),{recursive:true});if(action==='load')await fs.access(file).catch(()=>{throw Error('Ainda não existe estado salvo neste slot.');});await this.bridge.command(action==='save'?'SAVE':'LOAD',file,45000);const result=await this.state();if(action==='load')await this.close(true);return {...result,message:action==='save'?'Estado salvo no slot 1.':'Estado carregado.'};}await this.close(false);if(action==='restart')await this.options.restart();else await this.options.stop();return {closed:true};}finally{this.busy=false;}}
+
+ async command(action){if(this.busy)throw Error('Aguarde a operação atual.');if(!this.options.session()||!this.bridge)throw Error('O console foi encerrado.');if(!['resume','save','load','restart','exit'].includes(action))throw Error('Opção inválida.');this.busy=true;try{if(action==='resume'){await this.close(true);return {resumed:true};}if(action==='save'||action==='load'){if(this.options.session().saveStates===false)throw Error('Este motor não oferece save states.');const file=await this.options.stateFile();await fs.mkdir(path.dirname(file),{recursive:true});if(action==='load')await fs.access(file).catch(()=>{throw Error('Ainda não existe estado salvo neste slot.');});await this.bridge.command(action==='save'?'SAVE':'LOAD',file,45000);const result=await this.state();if(action==='load')await this.close(true);return {...result,message:action==='save'?'Estado salvo no slot 1.':'Estado carregado.'};}await this.close(false);if(action==='restart')await this.options.restart();else await this.options.stop();return {closed:true};}finally{this.busy=false;}}
+
  destroy(){this.detach();if(this.window&&!this.window.isDestroyed())this.window.destroy();this.window=null;}
+
 }
+
 module.exports={QuickMenuManager};
+

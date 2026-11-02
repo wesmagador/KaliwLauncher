@@ -1,0 +1,83 @@
+[
+  {
+    "id": "nes",
+    "repo": "libretro/libretro-fceumm",
+    "ref": "ac0d00a7fc01166f84c7bac01d1084ebfd2b865e",
+    "archive": "fceumm-ac0d00a7fc01166f84c7bac01d1084ebfd2b865e.zip",
+    "url": "https://codeload.github.com/libretro/libretro-fceumm/zip/ac0d00a7fc01166f84c7bac01d1084ebfd2b865e",
+    "sourceSnapshotAt": "2026-10-26T02:36:18.105Z",
+    "sha256": "62ee00f82a0d94c9d36a3dc0d07e5dff24a395df66060d37cc6d443a29620efe"
+  },
+  {
+    "id": "n64",
+    "repo": "libretro/mupen64plus-libretro-nx",
+    "ref": "15bada85906593376e8fd697f1b0b3af3a20f512",
+    "archive": "mupen64plus_next-15bada85906593376e8fd697f1b0b3af3a20f512.zip",
+    "url": "https://codeload.github.com/libretro/mupen64plus-libretro-nx/zip/15bada85906593376e8fd697f1b0b3af3a20f512",
+    "sourceSnapshotAt": "2026-10-26T02:36:18.136Z",
+    "sha256": "1d934b964cb7f11d7d71464db11b3835e9327c31a3c35e9d9a9056b783acda7c"
+  },
+  {
+    "id": "sms",
+    "repo": "drhelius/Gearsystem",
+    "ref": "215c22f73d06871e12291025105c98470509468d",
+    "url": "https://codeload.github.com/drhelius/Gearsystem/zip/215c22f73d06871e12291025105c98470509468d",
+    "archive": "gearsystem-215c22f73d06871e12291025105c98470509468d.zip",
+    "sha256": "3a414856f0101b8c2ba327ef4562da8741e41ed83dfa1b6d0bba5d95d0049fed"
+  },
+  {
+    "id": "gba",
+    "repo": "libretro/mgba",
+    "ref": "7a12d6d4b9acb14c0ae62c9166b6a2f3d08007f6",
+    "archive": "mgba-7a12d6d4b9acb14c0ae62c9166b6a2f3d08007f6.zip",
+    "url": "https://codeload.github.com/libretro/mgba/zip/7a12d6d4b9acb14c0ae62c9166b6a2f3d08007f6",
+    "sourceSnapshotAt": "2026-10-26T02:36:18.185Z",
+    "sha256": "10a4f19327739dd912b5ece6aeec49d9bf859793f9ffc841df1dd0c9ea89c875"
+  },
+  {
+    "id": "gb",
+    "repo": "libretro/gambatte-libretro",
+    "ref": "7809bb68ee96c3e6c74e9d9c4c8bb09aa7c6801d",
+    "archive": "gambatte-7809bb68ee96c3e6c74e9d9c4c8bb09aa7c6801d.zip",
+    "url": "https://codeload.github.com/libretro/gambatte-libretro/zip/7809bb68ee96c3e6c74e9d9c4c8bb09aa7c6801d",
+    "sourceSnapshotAt": "2026-10-26T02:36:18.227Z",
+    "sha256": "5cf0ffa297dad944734b037a86d853b7ddbd300a498cc0b428b982e61384a18e"
+  },
+  {
+    "id": "wii",
+    "repo": "libretro/dolphin",
+    "ref": "3aac3f052f733f8df2f1616843a4d2e14002ed11",
+    "archive": "dolphin-3aac3f052f733f8df2f1616843a4d2e14002ed11.zip",
+    "url": "https://codeload.github.com/libretro/dolphin/zip/3aac3f052f733f8df2f1616843a4d2e14002ed11",
+    "sourceSnapshotAt": "2026-10-26T02:36:30.358Z",
+    "sha256": "8968a4face3ae99dea51dad335538354ba79d21249bd3588cb7d44bf6487e4b8"
+  },
+  {
+    "id": "atari",
+    "repo": "libretro/stella",
+    "ref": "9a7c60328a94a5a8947c01d7e6efef0a33475b54",
+    "archive": "stella-9a7c60328a94a5a8947c01d7e6efef0a33475b54.zip",
+    "url": "https://codeload.github.com/libretro/stella/zip/9a7c60328a94a5a8947c01d7e6efef0a33475b54",
+    "sourceSnapshotAt": "2026-10-26T02:36:32.605Z",
+    "sha256": "4f4c79ab5b0d337bc056caeaf458389662de14faad1ddd9e0ddba8140c8f249c"
+  },
+  {
+    "id": "wiiu",
+    "repo": "WizzardSK/cemu-libretro",
+    "ref": "c9ff2361c7e236bbc66a17f02047fa41936da34d",
+    "archive": "cemu-c9ff2361c7e236bbc66a17f02047fa41936da34d.zip",
+    "url": "https://codeload.github.com/WizzardSK/cemu-libretro/zip/c9ff2361c7e236bbc66a17f02047fa41936da34d",
+    "sourceSnapshotAt": "2026-10-26T02:36:34.883Z",
+    "reportedBaseVersion": "2.6-372-g29f2f1fa",
+    "sha256": "b2872e7059c2725efa8b1cfa111d014d6f4b683c0b00354afcf34c7baba640b9"
+  },
+  {
+    "id": "mame",
+    "repo": "libretro/mame2003-plus-libretro",
+    "ref": "d373dcb4b13a3767108f91778ea965faad9578c7",
+    "archive": "mame2003_plus-d373dcb4b13a3767108f91778ea965faad9578c7.zip",
+    "url": "https://codeload.github.com/libretro/mame2003-plus-libretro/zip/d373dcb4b13a3767108f91778ea965faad9578c7",
+    "sourceSnapshotAt": "2026-10-26T02:36:42.523Z",
+    "sha256": "e40c7d287621233ba3fa6ed46bc5d4d8929b791658a613cc8cf6cd747a227e2a"
+  }
+]
