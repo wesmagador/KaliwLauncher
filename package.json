@@ -1,7 +1,49 @@
 {
   "name": "kaliw-launcher",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "KaliwLauncher — sua próxima dimensão de jogo",
-  "main": "main.cjs"
+  "main": "main.cjs",
+  "scripts": {
+    "start": "electron .",
+    "check": "node --check main.cjs && node --check preload.cjs && node --check renderer.js && node --check engine-manager.cjs",
+    "dist": "electron-builder --win portable",
+    "test:engines": "node scripts/test-engines.cjs",
+    "prepare:engines": "node scripts/prepare-engines.cjs && node scripts/prepare-notices.cjs && node scripts/prepare-vc-runtime.cjs"
+  },
+  "devDependencies": {
+    "electron": "^44.9.1",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "com.kaliw.launcher",
+    "productName": "KaliwLauncher",
+    "files": [
+      "main.cjs",
+      "preload.cjs",
+      "index.html",
+      "style.css",
+      "renderer.js",
+      "artifacts/Kaliw-boot.webm",
+      "engine-manager.cjs"
+    ],
+    "win": {
+      "target": "portable"
+    },
+    "extraResources": [
+      {
+        "from": "engines",
+        "to": "engines",
+        "filter": [
+          "retroarch.exe",
+          "*.dll",
+          "cores/*.dll",
+          "autoconfig/**/*",
+          "info/*.info",
+          "licenses/**/*",
+          "manifest.json"
+        ]
+      }
+    ]
+  }
 }
