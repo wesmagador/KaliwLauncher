@@ -131,3 +131,7 @@ Escolher jogo abre a biblioteca da plataforma ativa sobre o console pausado. Dir
 
 ## Correção 0.9.8 — Erro de memória ao fechar PS2
 O menu libretro usa os callbacks de entrada do frontend, eliminando a segunda abertura SDL no processo do RetroArch. O encerramento PS2 foi reproduzido com STATUS_HEAP_CORRUPTION (0xC0000374) na configuração anterior; com a mudança, o teste de boot retorna código zero. Mantidos DualSense via SDL2 no frontend, atalhos remapeáveis e a lista do menu rápido. Testados select/start, gatilhos e quatro portas via callback, boot real PS2 e inserção de disco. Mensagens de encerramento agora identificam o motor, código e aba Logs.
+
+
+## Versão 0.9.9 — BIOS Master System
+A importação SMS aceita dumps .sms/.bin/.rom de 8, 16, 32, 64, 128 e 256 KB. Imagens não catalogadas são identificadas como tamanho conferido, sem garantia de autenticidade ou compatibilidade. O nome original e MD5 ficam na metadata; bios.sms é a única cópia ativa do motor. Uma nova importação substitui essa cópia. As validações por hash de GB/GBC/GBA foram mantidas. Testes: 14 imagens do usuário copiadas sem alteração, BIOS modificada carregada pelo Gearsystem, preservação da cópia anterior em entradas inválidas e exclusão.

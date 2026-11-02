@@ -30,7 +30,7 @@ class EngineManager {
 
  let biosLabels={};try{biosLabels=JSON.parse(await fs.readFile(path.join(dir,'bios-labels.json'),'utf8'));}catch{}
 
- result[id]={name:engine.name,available,bios,biosLabels,optionalFirmware:await require('./optional-firmware.cjs').files(this.system,id),requiresBios:!!engine.bios,boot:!!engine.boot,disc:!!engine.disc,saveStates:!engine.noStates};}return result;}
+ result[id]={name:engine.name,available,bios,biosLabels,optionalFirmware:await require('./optional-firmware.cjs').files(this.system,id),optionalFirmwareInfo:await require('./optional-firmware.cjs').info(this.system,id),requiresBios:!!engine.bios,boot:!!engine.boot,disc:!!engine.disc,saveStates:!engine.noStates};}return result;}
 
  async importBios(id,files){if(!this.check(id).bios)throw Error('Esta plataforma não usa importação de BIOS.');const dir=id==='ps1'?this.system:path.join(this.system,'pcsx2','bios');await fs.mkdir(dir,{recursive:true});let count=0;
 
