@@ -11,7 +11,7 @@
   "artifacts": [
     {
       "file": "kaliw-engine-host.exe",
-      "sha256": "6b75fe6fb35b910334ef48618327cf4ff3f9cb81a1deee0644afbf4d555889fd"
+      "sha256": "817498186ddd3f428f0187bf9aabc56c00643ce5b8788fe6ba0bfe4053c057dc"
     },
     {
       "file": "cores/kaliw_discbridge_libretro.dll",

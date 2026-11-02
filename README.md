@@ -163,3 +163,7 @@ LibOrbisPkg v0.2, LGPL-3.0, é carregada dinamicamente pelo auxiliar Kaliw. A DL
 O supervisor agora ativa o menu antes de suspender o processo do motor: suspender a janela em primeiro plano antes da troca de foco podia impedir a exibição do menu no Windows. O menu usa prioridade superior e o MAME inicia em janela maximizada para permitir a sobreposição. Create + Options / Ctrl direito + Enter continuam sendo os atalhos padrão, remapeáveis em Ajustes.
 
 Validação: jogo real MAME 0.174 em primeiro plano, combinação de teclado injetada pelo Windows, menu com foco confirmado, biblioteca da plataforma, retomada da mesma sessão e encerramento. Pausa/retomada do supervisor e remapeamento também passaram. O teste automatizado não pressionou os botões físicos do DualSense; o caminho de leitura SDL do controle permanece o mesmo.
+
+
+## Correção 0.11.2 — Tela cheia sem bordas no MAME
+O MAME nativo agora ocupa o monitor inteiro em janela sem bordas, mantendo a composição do Windows disponível para o menu rápido. O supervisor remove a barra de título e moldura somente da janela do motor criado pelo Kaliw e ajusta a área ao monitor em que ela está. Outras plataformas mantêm suas configurações. A verificação geométrica confirmou área externa e área de jogo 1920x1080, sem moldura, antes do menu rápido e após retomar a mesma sessão.

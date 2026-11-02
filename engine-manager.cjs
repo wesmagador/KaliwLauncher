@@ -123,7 +123,7 @@ class EngineManager {
 
  const args=['--config',configPath,'--verbose','--log-file',log,'--fullscreen','-L',path.join(this.bundle,'cores','kaliw_discbridge_libretro.dll')];if(game)args.push(arcade?.gamePath||game.path);
 
- if(arcade?.native){return {exe:path.join(this.bundle,'kaliw-engine-host.exe'),args:[arcade.exe,...arcade.args],cwd:arcade.cwd,engine:arcade.name,log,env,bridge:env.KALIW_BRIDGE,bios:'none',modern:true,identity:arcade.exe,saveStates:false};}
+ if(arcade?.native){env.KALIW_BORDERLESS='1';return {exe:path.join(this.bundle,'kaliw-engine-host.exe'),args:[arcade.exe,...arcade.args],cwd:arcade.cwd,engine:arcade.name,log,env,bridge:env.KALIW_BRIDGE,bios:'none',modern:true,identity:arcade.exe,saveStates:false};}
  return {exe:path.join(this.bundle,'retroarch.exe'),args,cwd:arcade?.cwd||(id==='ps2'?base:this.bundle),engine:arcade?.name||engine.name,log,env,bridge:env.KALIW_BRIDGE,bios:engine.bios?(chosen||'auto'):'none'};
 
  }
