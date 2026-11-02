@@ -6,7 +6,7 @@ static void* (*sdl_open)(int);
 static void (*sdl_close)(void*),(*sdl_update)(void),(*sdl_pump)(void);
 static unsigned char (*sdl_button)(void*,int);
 static short (*sdl_axis)(void*,int);
-static void menu_sdl_init(void){wchar_t file[32768];if(!GetEnvironmentVariableW(L"KALIW_SDL",file,32768))return;menu_sdl=LoadLibraryExW(file,NULL,LOAD_WITH_ALTERED_SEARCH_PATH);if(!menu_sdl)return;
+static void menu_sdl_init(void){if(GetEnvironmentVariableW(L"KALIW_NO_SDL_MENU",NULL,0))return;wchar_t file[32768];if(!GetEnvironmentVariableW(L"KALIW_SDL",file,32768))return;menu_sdl=LoadLibraryExW(file,NULL,LOAD_WITH_ALTERED_SEARCH_PATH);if(!menu_sdl)return;
 #define SDL_FN(target,name) target=(void*)GetProcAddress(menu_sdl,name)
 int(*init)(unsigned);int(*hint)(const char*,const char*);int(*events)(int);SDL_FN(init,"SDL_InitSubSystem");SDL_FN(hint,"SDL_SetHint");SDL_FN(events,"SDL_GameControllerEventState");SDL_FN(sdl_count,"SDL_NumJoysticks");SDL_FN(sdl_is_pad,"SDL_IsGameController");SDL_FN(sdl_attached,"SDL_GameControllerGetAttached");SDL_FN(sdl_open,"SDL_GameControllerOpen");SDL_FN(sdl_close,"SDL_GameControllerClose");SDL_FN(sdl_update,"SDL_GameControllerUpdate");SDL_FN(sdl_pump,"SDL_PumpEvents");SDL_FN(sdl_button,"SDL_GameControllerGetButton");SDL_FN(sdl_axis,"SDL_GameControllerGetAxis");if(!init||!hint||!events||!sdl_count||!sdl_is_pad||!sdl_attached||!sdl_open||!sdl_close||!sdl_update||!sdl_pump||!sdl_button||!sdl_axis){sdl_count=NULL;return;}hint("SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS","1");hint("SDL_JOYSTICK_HIDAPI_PS5","1");if(init(0x2000)){sdl_count=NULL;return;}/* Do not disable events here: RetroArch may share this SDL instance. */
 #undef SDL_FN
