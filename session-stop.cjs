@@ -1,0 +1,3 @@
+// A normal process exit can win the race against the IPC acknowledgement.
+async function stop(child,bridge,timeout=10000){if(!child)return;const exited=()=>child.exitCode!==null||child.signalCode!=null;if(exited())return;let timer,resolveClose;const closed=new Promise(r=>{resolveClose=r;child.once('close',r);});try{try{await bridge.command('RESUME');if(!exited())await bridge.command('QUIT','',timeout);}catch(e){if(!exited())throw e;}if(!exited())await Promise.race([closed,new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('Feche a janela do console para continuar.')),timeout);})]);}finally{clearTimeout(timer);child.removeListener('close',resolveClose);}}
+module.exports={stop};

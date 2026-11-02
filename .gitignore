@@ -1,0 +1,24 @@
+node_modules/
+dist/
+.build-runtime/
+*.log
+
+engines/*
+!engines/*.json
+!engines/licenses/
+!engines/info/
+!engines/autoconfig/
+sources/
+
+# Somente o vídeo original faz parte dos recursos de interface publicados.
+artifacts/*
+!artifacts/Kaliw-boot.webm
+
+# Dados locais e credenciais nunca fazem parte do projeto.
+.env
+.env.*
+*.pem
+*.key
+prod.keys
+title.keys
+library.json

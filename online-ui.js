@@ -1,0 +1,120 @@
+const downloadApi=window.downloads;
+
+let catalog=[],hubMode='discover',hubFilter='all',hubQuery='',catalogLoaded=false,checkingCatalog=false,reviewItem=null;
+
+const transfers=new Map();
+
+const bytesLabel=bytes=>bytes<1024*1024?(bytes/1024).toFixed(0)+' KB':(bytes/(1024*1024)).toFixed(1)+' MB';
+
+function supportedPlatforms(){return consoles.filter(c=>config.engines?.[c.id]?.available);}
+
+function element(tag,className,text){const e=document.createElement(tag);if(className)e.className=className;if(text!==undefined)e.textContent=text;return e;}
+
+function hubButton(text,action,id,className='secondary'){const b=element('button',className,text);b.dataset.action=action;if(id)b.dataset.id=id;return b;}
+
+function openHub(kind){window.closeCompatibility?.();window.closeMods?.();window.closeLogs?.();if(typeof cancelCapture==='function')cancelCapture();window.scrollTo({top:0,behavior:'instant'});settingsView=false;$('settings').hidden=true;document.querySelector('.heading').hidden=false;document.querySelector('main > .eyebrow').hidden=false;hubView=kind;hubQuery='';$('catalogSearch').value='';hubFilter='all';renderHub();if(kind==='games'&&hubMode==='library')window.focusCatalogGame?.();if(!catalogLoaded)loadCatalog(true);}
+
+async function loadCatalog(refresh=false){if(!downloadApi)return;if(checkingCatalog)return;checkingCatalog=true;$('refreshCatalog').disabled=true;$('refreshCatalog').textContent='Verificando fontes…';try{catalog=await downloadApi.catalog(refresh);catalogLoaded=true;}catch(e){toast(e.message);}finally{checkingCatalog=false;$('refreshCatalog').disabled=false;$('refreshCatalog').textContent='Verificar online ↻';if(hubView)renderHub();}}
+
+function renderHub(){
+
+ if(!hubView)return;window.syncNavigation?.();$('onlineHub').hidden=false;for(const id of ['shelfHeading','carousel'])$(id).hidden=true;document.querySelector('.selection').hidden=true;
+
+ $('home').classList.remove('active');$('biosNav').classList.toggle('active',hubView==='bios');$('libraryNav').classList.toggle('active',hubView==='games');$('libraryNav').disabled=false;
+
+ document.querySelector('h1').innerHTML=hubView==='bios'?'Prepare seu<br><em>universo.</em>':'Sua próxima<br><em>aventura.</em>';
+
+ $('subtitle').textContent=hubView==='bios'?'Encontre, escolha e instale o firmware do seu console.':'Escolha o jogo e quando baixar. O resto fica com o Kaliw.';
+
+ const platforms=supportedPlatforms();$('total').textContent=String(config.games.filter(g=>platforms.some(p=>p.id===g.console)).length).padStart(2,'0');
+
+ const select=$('catalogPlatform');select.replaceChildren(new Option('Todas as plataformas','all'));for(const p of (hubView==='bios'?[...consoles,...KaliwPlatforms.pending.filter(p=>p.id)]:platforms))select.add(new Option(p.name,p.id));if(hubView!=='bios'&&!platforms.some(p=>p.id===hubFilter))hubFilter='all';select.value=hubFilter;
+
+ $('gameTabs').hidden=hubView!=='games';document.querySelectorAll('[data-hub-mode]').forEach(b=>{b.classList.toggle('chosen',b.dataset.hubMode===hubMode);b.setAttribute('aria-pressed',String(b.dataset.hubMode===hubMode));});
+
+ $('scanResults').hidden=hubView!=='bios'||!$('scanResults').hasChildNodes();$('scanBios').hidden=hubView!=='bios';$('hubImport').hidden=hubView!=='games';$('openOptical').hidden=hubView!=='games';window.renderSession?.();$('refreshCatalog').hidden=hubView==='games'&&hubMode==='library';
+
+ $('catalogNote').textContent=hubView==='bios'?'O catálogo online oferece firmware livre. Cada console indica se usa BIOS, firmware ou chaves. OpenBIOS não reproduz o boot Sony. Arquivos comerciais não são incluídos.':'Catálogo inicial de jogos homebrew distribuídos pelos autores. Downloads começam somente após sua confirmação. Importe seus outros jogos na biblioteca.';
+
+ const platformArea=$('biosPlatforms');platformArea.hidden=hubView!=='bios';platformArea.replaceChildren();
+
+ if(hubView==='bios')window.renderFirmwareCards?.();
+ renderCatalog();
+
+}
+
+function renderCatalog(){
+
+ if(!hubView)return;const container=$('catalogList'),active=document.activeElement?.closest('[data-action]');const focusKey=active?{action:active.dataset.action,id:active.dataset.id}:null;container.replaceChildren();
+
+ const platforms=supportedPlatforms();const library=hubView==='games'&&hubMode==='library';
+
+ const entries=(library?config.games:catalog).filter(item=>platforms.some(p=>p.id===item.console)&&(hubFilter==='all'||item.console===hubFilter)&&(library||item.kind===(hubView==='bios'?'bios':'game'))&&`${item.name} ${item.author||''} ${item.console}`.toLowerCase().includes(hubQuery));
+
+ for(const item of entries){const card=element('article','catalog-card '+item.console);card.dataset.entryId=item.id;card.append(element('span','catalog-platform',item.console.toUpperCase()+' / '+(library?'NA SUA BIBLIOTECA':item.kind==='bios'?'FIRMWARE LIVRE':'HOMEBREW')),element('h3','',item.name),element('p','',library?item.path:item.description));
+
+ const footer=element('div','catalog-meta');footer.append(element('span','',library?'Arquivo local':`${item.license} · ${bytesLabel(item.bytes)}`));if(!library)footer.append(element('span','',item.check?item.check.ok?'Fonte disponível ✓':'Fonte indisponível agora':'Fonte ainda não verificada'));card.append(footer);
+
+ const actions=element('div','catalog-actions');
+
+ if(library){actions.append(hubButton(config.session?.console===item.console?'Inserir CD/DVD →':'Jogar agora →','play',item.id,'primary'),hubButton('Remover','remove',item.id));}
+
+ else {const progress=transfers.get(item.id),busy=progress&&['downloading','installing'].includes(progress.state)||item.active&&!progress;
+
+ const installed=item.kind==='bios'?config.engines[item.console]?.bios.includes('openbios.bin'):config.games.some(g=>g.catalogId===item.id);
+
+ const b=hubButton(busy?'Baixando…':installed?'Instalado ✓':item.downloaded?'Adicionar novamente +':'Escolher download ↓','review',item.id,'primary');b.disabled=!!busy||installed;actions.append(b,hubButton('Fonte ↗','source',item.id));if(busy)actions.append(hubButton('Cancelar','cancel',item.id));
+
+ if(progress){const status=element('div','transfer-status');const bar=element('progress');bar.max=100;bar.value=progress.percent;bar.setAttribute('aria-label','Download de '+item.name);status.append(bar,element('small','',progress.state==='done'?'Instalado na sua biblioteca.':progress.state==='error'||progress.state==='canceled'?progress.error:progress.state==='installing'?'Verificando e instalando…':`${progress.percent}% · ${bytesLabel(progress.received)} / ${bytesLabel(item.bytes)}`));card.append(status);}}
+
+ card.append(actions);container.append(card);}
+
+ if(!entries.length)container.append(element('div','hub-empty',!platforms.length?'Nenhum motor integrado disponível neste pacote.':checkingCatalog?'Consultando as fontes…':library?'Nenhum jogo nesta seleção. Importe um jogo ou abra Descobrir jogos.':hubView==='bios'&&hubFilter==='ps2'?'PS2: importe sua BIOS. Não há firmware livre de PS2 validado neste catálogo.':'Nenhum item encontrado nesta seleção.'));
+
+ if(focusKey){const target=[...container.querySelectorAll('[data-action]')].find(b=>b.dataset.action===focusKey.action&&b.dataset.id===focusKey.id&&!b.disabled);if(target){if(active.classList.contains('ui-focused'))focusUi(target);else target.focus({preventScroll:true});}}
+
+}
+
+function updateTransfer(id){
+
+ const card=[...$('catalogList').children].find(c=>c.dataset.entryId===id),item=catalog.find(c=>c.id===id),progress=transfers.get(id);if(!card||!item||!progress)return;
+
+ const busy=['downloading','installing'].includes(progress.state),installed=item.kind==='bios'?config.engines[item.console]?.bios.includes('openbios.bin'):config.games.some(g=>g.catalogId===id);
+
+ const button=card.querySelector('[data-action="review"]');if(!button)return;button.disabled=busy||installed;button.textContent=busy?'Baixando…':installed?'Instalado ✓':'Escolher download ↓';
+
+ let cancel=card.querySelector('[data-action="cancel"]');if(!cancel){cancel=hubButton('Cancelar','cancel',id);card.querySelector('.catalog-actions').append(cancel);}cancel.hidden=!busy;
+
+ let status=card.querySelector('.transfer-status');if(!status){status=element('div','transfer-status');const bar=element('progress');bar.max=100;bar.setAttribute('aria-label','Download de '+item.name);status.append(bar,element('small'));card.querySelector('.catalog-actions').before(status);}
+
+ status.querySelector('progress').value=progress.percent||0;status.querySelector('small').textContent=progress.state==='done'?'Instalado.':progress.state==='error'||progress.state==='canceled'?progress.error:progress.state==='installing'?'Verificando e instalando…':`${progress.percent||0}% · ${bytesLabel(progress.received||0)} / ${bytesLabel(item.bytes)}`;
+
+}
+
+function reviewDownload(id){reviewItem=catalog.find(x=>x.id===id);if(!reviewItem)return;$('reviewTitle').textContent=reviewItem.name;$('reviewDescription').textContent=reviewItem.description;$('reviewDetails').replaceChildren();for(const [key,value] of [['Plataforma',reviewItem.console.toUpperCase()],['Versão',reviewItem.version],['Autor',reviewItem.author],['Licença',reviewItem.license],['Download',bytesLabel(reviewItem.bytes)],['Origem',new URL(reviewItem.url).hostname]])$('reviewDetails').append(element('dt','',key),element('dd','',value));$('reviewNote').textContent=reviewItem.kind==='bios'?'Será baixado, verificado por SHA-256 e instalado na pasta de BIOS do Kaliw. A BIOS Sony original será preservada.':'Será baixado, verificado por SHA-256 e adicionado à biblioteca. O jogo não será iniciado automaticamente.';$('downloadReview').showModal();}
+
+async function doDownload(){const item=reviewItem;if(!item||!downloadApi)return;$('downloadReview').close();transfers.set(item.id,{state:'downloading',received:0,percent:0});$('downloadMessage').textContent='';updateTransfer(item.id);try{const result=await downloadApi.download(item.id);config=result.config;catalog=result.catalog;toast(item.name+' instalado.');if(hubView){updateTransfer(item.id);$('total').textContent=String(config.games.length).padStart(2,'0');if(hubView==='bios'&&![...transfers.values()].some(p=>['downloading','installing'].includes(p.state)))renderHub();}else render();}catch(e){toast(e.message);}finally{if(hubView)updateTransfer(item.id);}}
+
+async function importBios(id){if(!api)return;const c=await openFileBrowser(id,'bios');if(c){config=c;refreshEngines();renderHub();toast('BIOS importada.');}}
+
+$('biosNav').onclick=()=>openHub('bios');$('libraryNav').onclick=()=>{hubMode='library';openHub('games');};
+
+$('catalogSearch').oninput=()=>{hubQuery=$('catalogSearch').value.trim().toLowerCase();if(hubView==='bios')renderFirmwareCards();renderCatalog();};$('catalogPlatform').onchange=()=>{hubFilter=$('catalogPlatform').value;if(hubView==='bios')renderFirmwareCards();renderCatalog();};
+
+$('refreshCatalog').onclick=()=>loadCatalog(true);$('closeReview').onclick=()=>$('downloadReview').close();$('reviewSource').onclick=()=>action(()=>downloadApi?.source(reviewItem.id));$('confirmDownload').onclick=doDownload;
+
+document.querySelectorAll('[data-hub-mode]').forEach(b=>b.onclick=()=>{hubMode=b.dataset.hubMode;renderHub();});
+
+$('hubImport').onclick=()=>action(async()=>{if(hubFilter==='all'){$('catalogPlatform').focus();toast('Selecione uma plataforma no filtro para importar seus jogos.');return;}const id=hubFilter;if(!id)return;const c=await openFileBrowser(id,'game');if(c){config=c;hubMode='library';renderHub();}});
+
+$('scanBios').onclick=()=>action(async()=>{if(!downloadApi)return;const button=$('scanBios');button.disabled=true;button.textContent='Procurando…';try{const result=await openFileBrowser('ps1','folder');if(!result)return;const area=$('scanResults');area.hidden=false;area.replaceChildren(element('h3','',result.found.length+' BIOS encontrada(s)'));for(const found of result.found.filter(f=>config.engines[f.console]?.available)){const row=element('div','found-row');row.append(element('span','',found.console.toUpperCase()+' · '+found.relative),hubButton('Importar esta BIOS','found',found.id));area.append(row);}if(!result.found.length)area.append(element('p','','Nenhuma BIOS reconhecida na pasta selecionada.'));if(result.limited)area.append(element('p','','Limite da busca atingido. Selecione uma pasta menor.'));}finally{button.disabled=false;button.textContent='Procurar BIOS na pasta';}});
+
+$('onlineHub').onclick=event=>{const b=event.target.closest('[data-action]');if(!b||b.disabled)return;action(async()=>{const id=b.dataset.id;switch(b.dataset.action){case 'review':reviewDownload(id);break;case 'source':await downloadApi?.source(id);break;case 'cancel':await downloadApi?.cancel(id);break;case 'guide':await downloadApi?.guide();break;case 'import-bios':await importBios(id);break;case 'found':config=await downloadApi.importFound(id);b.disabled=true;b.textContent='Importada ✓';renderHub();break;case 'play':{const game=config.games.find(g=>g.id===id);if(game)await launchSession(game.console,id);break;}case 'remove':if(await askConfirm('Remover da biblioteca? O arquivo será preservado.')){config=await api.remove(id);renderHub();}break;}});};
+
+downloadApi?.onProgress(progress=>{transfers.set(progress.id,progress);if(['done','error','canceled'].includes(progress.state))$('downloadMessage').textContent=progress.state==='done'?'Download concluído e instalado.':progress.error;if(hubView)updateTransfer(progress.id);});
+
+window.renderHub=renderHub;
+
+window.handleHubPad=pad=>{const modal=document.querySelector('dialog[open]'),scope=modal||$('onlineHub');const buttons=[...scope.querySelectorAll('button:not(:disabled),input,select')].filter(b=>b.getClientRects().length);const index=buttons.indexOf(document.activeElement);if(pad.buttons[1]?.pressed){if(modal)modal.close();else home();return true;}const forward=pad.buttons[15]?.pressed||pad.buttons[13]?.pressed||pad.axes[0]>.6||pad.axes[1]>.6;const backward=pad.buttons[14]?.pressed||pad.buttons[12]?.pressed||pad.axes[0]<-.6||pad.axes[1]<-.6;if((forward||backward)&&buttons.length){buttons[(index+(forward?1:-1)+buttons.length)%buttons.length].focus();return true;}if(pad.buttons[0]?.pressed){if(document.activeElement?.tagName==='BUTTON')document.activeElement.click();return true;}return false;};
+
+

@@ -1,0 +1,14 @@
+(function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else root.Shortcuts=api;})(typeof globalThis==='object'?globalThis:this,function(){
+ const masks={'0':0x1000,'1':0x2000,'2':0x4000,'3':0x8000,'4':0x100,'5':0x200,'6':0x10,'7':0x20,'8':0x40,'9':0x80,h0up:1,h0down:2,h0left:4,h0right:8,lt:0x10000,rt:0x20000};
+ const special={up:38,down:40,left:37,right:39,enter:13,space:32,tab:9,lshift:160,rshift:161,lctrl:162,rctrl:163,lalt:164,ralt:165,add:107,subtract:109,period:190,comma:188,slash:191,semicolon:186,quote:222,backquote:192,minus:189,equals:187,leftbracket:219,rightbracket:221,backslash:220};
+ const keyVk=key=>/^[a-z]$/.test(key)?key.toUpperCase().charCodeAt(0):/^[0-9]$/.test(key)?key.charCodeAt(0):/^kp[0-9]$/.test(key)?96+Number(key[2]):(Object.hasOwn(special,key)?special[key]:0);
+ function keyFromCode(code){if(/^Key[A-Z]$/.test(code))return code.slice(3).toLowerCase();if(/^Digit[0-9]$/.test(code))return code.slice(5);if(/^Numpad[0-9]$/.test(code))return 'kp'+code.slice(6);return {ArrowUp:'up',ArrowDown:'down',ArrowLeft:'left',ArrowRight:'right',Enter:'enter',Space:'space',Tab:'tab',ShiftLeft:'lshift',ShiftRight:'rshift',ControlLeft:'lctrl',ControlRight:'rctrl',AltLeft:'lalt',AltRight:'ralt',NumpadAdd:'add',NumpadSubtract:'subtract',Period:'period',Comma:'comma',Slash:'slash',Semicolon:'semicolon',Quote:'quote',Backquote:'backquote',Minus:'minus',Equal:'equals',BracketLeft:'leftbracket',BracketRight:'rightbracket',Backslash:'backslash'}[code];}
+ const defaults=()=>({menuKeys:['rctrl','enter'],menuButtons:['6','7'],navKeys:['q','e'],navButtons:['4','5']});
+ function normalize(value){const d=defaults();for(const field of Object.keys(d)){const pair=value?.[field],valid=field.endsWith('Keys')?v=>typeof v==='string'&&!!keyVk(v):v=>typeof v==='string'&&Object.hasOwn(masks,v);if(Array.isArray(pair)&&pair.length===2&&pair[0]!==pair[1]&&pair.every(valid))d[field]=[...pair];}return d;}
+ function keyLabel(k){return ({rctrl:'Ctrl D',lctrl:'Ctrl E',rshift:'Shift D',lshift:'Shift E',ralt:'Alt D',lalt:'Alt E',enter:'Enter',space:'Espaço',up:'↑',down:'↓',left:'←',right:'→',tab:'Tab'}[k]||(/^kp/.test(k)?'Num '+k[2]:k.toUpperCase()));}
+ function padLabel(k){return ({0:'A',1:'B',2:'X',3:'Y',4:'LB',5:'RB',6:'Start',7:'Select',8:'L3',9:'R3',h0up:'D-pad ↑',h0down:'D-pad ↓',h0left:'D-pad ←',h0right:'D-pad →',lt:'LT',rt:'RT'}[k]||k);}
+ function down(device,button){if(!device?.connected)return false;const pressed=device.buttons|(device.axes?.[4]>.65?0x10000:0)|(device.axes?.[5]>.65?0x20000:0);return !!(pressed&masks[button]);}
+ function chordKeys(pair,held){return pair.every(k=>held.has(k));}
+ function chordPad(pair,device){return pair.every(b=>down(device,b));}
+ return {defaults,normalize,keyVk,keyFromCode,keyLabel,padLabel,masks,down,chordKeys,chordPad};
+});
