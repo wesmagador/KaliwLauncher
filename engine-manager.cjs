@@ -98,7 +98,8 @@ class EngineManager {
 
  const controls=require('./input-config.cjs').generate(preferences.controls,id);
 
- const opts=[...controls.options,line('gambatte_gb_bootloader','enabled'),line('mgba_use_bios','ON'),line('gearsystem_bios_sms',(await require('./optional-firmware.cjs').files(this.system,'sms')).length?'Enabled':'Disabled'),line('mupen64plus-rdp-plugin','gliden64'),line('dolphin_cpu_core','JIT64'),line('dolphin_renderer','Hardware'),line('swanstation_BIOS_PatchFastBoot',fullboot?'false':'true'),line('swanstation_GPU_Renderer','Software'),line('pcsx2_renderer','vulkan'),line('pcsx2_gsdump_trigger','disabled'),line('pcsx2_fast_boot',fullboot?'disabled':'enabled'),line('pcsx2_bios',chosen||status.bios[0])];
+ const wiiDevice=({remote:'upright',sideways:'sideways',nunchuk:'nunchuk',classic:'classic',motion:'motionplus_nunchuk'})[require('./input-config.cjs').normalize(preferences.controls).wiiType];
+ const opts=[...controls.options,line('dolphin_wiimote_default_device',wiiDevice),line('dolphin_bluetooth_passthrough','disabled'),line('dolphin_alt_gc_ports_on_wii','disabled'),line('dolphin_save_load_settings','disabled'),line('gambatte_gb_bootloader','enabled'),line('mgba_use_bios','ON'),line('gearsystem_bios_sms',(await require('./optional-firmware.cjs').files(this.system,'sms')).length?'Enabled':'Disabled'),line('mupen64plus-rdp-plugin','gliden64'),line('dolphin_cpu_core','JIT64'),line('dolphin_renderer','Hardware'),line('swanstation_BIOS_PatchFastBoot',fullboot?'false':'true'),line('swanstation_GPU_Renderer','Software'),line('pcsx2_renderer','vulkan'),line('pcsx2_gsdump_trigger','disabled'),line('pcsx2_fast_boot',fullboot?'disabled':'enabled'),line('pcsx2_bios',chosen||status.bios[0])];
 
  // Empty region overrides let SwanStation identify the correct BIOS by its
 

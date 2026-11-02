@@ -143,3 +143,17 @@ MAME / Arcade mantém o núcleo 2003-Plus para os conjuntos que correspondem aos
 O MAME 0.174 incluído é extraído no primeiro uso, com SHA-256 fixado em engines/mame-compat-manifest.json. O motor usa GDI para apresentação, sem depender de DirectX 9 adicional. Configurações, NVRAM e perfis ficam em emulation/arcade. O perfil do Kaliw traduz teclado e até quatro controles; no DualSense, Create insere ficha e Options dá Start. O menu rápido supervisiona pausa, retorno e troca de jogo. Save state pelo menu rápido não está conectado ao MAME nativo; permanece disponível no núcleo 2003-Plus. Não há BIOS ou ROMs comerciais no pacote.
 
 Validação: o nbbatman.zip fornecido foi aprovado por -verifyroms e executado com o DualSense reconhecido; testes verificaram pausa, retomada, encerramento e preservação do ZIP. A seleção entre motores e a tradução dos controles têm testes próprios. Fontes do MAME 0.174 estão no arquivo MAME-mame0174.zip do pacote de fontes. Licenças e avisos adicionais acompanham engines/licenses/mame0174.
+
+
+## Versão 0.11.0 — Importação PS3/PS4 e Nunchuk
+O menu rápido abre com Options + Create no DualSense (Start + Select), ou Ctrl direito + Enter no teclado. Os atalhos podem ser alterados em Ajustes. No MAME nativo, Create insere ficha e Options inicia a partida; aperte os dois juntos para abrir o menu.
+
+Wii define o dispositivo também nas opções do Dolphin para evitar iniciar como Wiimote simples e ignorar o Nunchuk. Selecione Wiimote + Nunchuk em Ajustes e reinicie o jogo. Com o mapeamento padrão, analógico esquerdo controla o Nunchuk, direito aponta, R2 sacode o Wiimote. A/B do Wii correspondem a Círculo/Cruz no DualSense; Super Mario Galaxy pede ambos na abertura.
+
+PS3 agora reconhece ISO9660 legível/decifrada e extrai PS3_GAME para a biblioteca gerenciada. Importe a ISO na plataforma PS3; imagens protegidas ou layouts não suportados geram erro. RPCS3 ainda requer firmware PS3 importado pelo usuário.
+
+PS4 aceita PKG base e atualização legíveis pelo importador. Selecione ambos juntos: o base é instalado primeiro e a atualização aplicada em uma nova cópia; aparece uma entrada por TITLE_ID. Atualizações sem jogo base geram orientação. DLC não é instalado por esta opção. Executáveis extraídos continuam aceitos. Não há download de chaves ou tentativa de descobrir senhas.
+
+A importação mostra progresso, preserva os arquivos originais e usa espaço adicional em emulation/installed. A extração não garante compatibilidade de emulação. Testes com os arquivos fornecidos reconheceram Miyazato (BLJM60007), Sonic Mania (CUSA07023, versão 01.03) e a configuração Nunchuk gerada pelo Dolphin. Não foi validada a jogabilidade de PS3/PS4 nem entrada física durante essa verificação de Wii.
+
+LibOrbisPkg v0.2, LGPL-3.0, é carregada dinamicamente pelo auxiliar Kaliw. A DLL pode ser substituída por versão compatível; o auxiliar pode ser recompilado usando scripts/build-pkg-tools.ps1. Fontes correspondentes e licenças acompanham o pacote de fontes; engines/pkg-manifest.json fixa as revisões e hashes.

@@ -233,7 +233,8 @@
       "extensions": [
         "self",
         "bin",
-        "elf"
+        "elf",
+        "iso"
       ],
       "description": "Firmware oficial necessário. Importe EBOOT.BIN ou o executável de seu jogo.",
       "supportExtensions": [
@@ -254,9 +255,10 @@
       "engine": "shadPS4",
       "extensions": [
         "bin",
-        "elf"
+        "elf",
+        "pkg"
       ],
-      "description": "Motor experimental. Importe o eboot.bin de um jogo extraído do seu console.",
+      "description": "Importe uma ISO decifrada de PS3 ou o EBOOT.BIN de um jogo extraído.",
       "supportExtensions": [
         "sprx"
       ],
@@ -318,4 +320,3 @@
     }
   ]
 };});
-

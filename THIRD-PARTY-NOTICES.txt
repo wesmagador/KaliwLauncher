@@ -146,3 +146,11 @@ Sources: https://github.com/mamedev/mame/releases/download/mame0174/mame0174s.zi
 Source archive: MAME-mame0174.zip
 Source SHA256: b9b1a65e855b055b0b6b262a7644d2b9a57c73541c55ee9eb60158508348a6fd
 License: GPL version 2 or later and file-specific licenses; see engines/licenses/mame0174/LICENSE.md and the complete official source archive. No game ROMs or commercial BIOS included.
+
+
+LibOrbisPkg v0.2, commit 72370ca3739e0708250695046b3886e50452dee7
+Copyright maxton and contributors. GNU LGPL version 3.
+https://github.com/maxton/LibOrbisPkg/tree/v0.2
+Unmodified DLL loaded dynamically by Kaliw helper. Compatible replacement DLLs permitted. Reverse engineering for debugging library modifications permitted.
+Corresponding source: LibOrbisPkg-v0.2.zip in delivered source package. See pkg-manifest.json for hashes. Build library with its LibOrbisPkg.sln and .NET Framework SDK; rebuild helper with scripts/build-pkg-tools.ps1.
+LGPL text: LibOrbisPkg-LICENSE.txt; GPL text: LibOrbisPkg-GPL-3.0.txt.

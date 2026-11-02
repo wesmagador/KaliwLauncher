@@ -1,0 +1,6 @@
+LibOrbisPkg v0.2, commit 72370ca3739e0708250695046b3886e50452dee7
+Copyright maxton and contributors. GNU LGPL version 3.
+https://github.com/maxton/LibOrbisPkg/tree/v0.2
+Unmodified DLL loaded dynamically by Kaliw helper. Compatible replacement DLLs permitted. Reverse engineering for debugging library modifications permitted.
+Corresponding source: LibOrbisPkg-v0.2.zip in delivered source package. See pkg-manifest.json for hashes. Build library with its LibOrbisPkg.sln and .NET Framework SDK; rebuild helper with scripts/build-pkg-tools.ps1.
+LGPL text: LibOrbisPkg-LICENSE.txt; GPL text: LibOrbisPkg-GPL-3.0.txt.

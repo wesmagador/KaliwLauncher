@@ -1,0 +1,18 @@
+{
+  "project": "LibOrbisPkg",
+  "version": "v0.2",
+  "commit": "72370ca3739e0708250695046b3886e50452dee7",
+  "repository": "https://github.com/maxton/LibOrbisPkg",
+  "license": "LGPL-3.0",
+  "sourceArchive": "LibOrbisPkg-v0.2.zip",
+  "sourceSha256": "ab1be658d3d398a9176dbfc18e8b3b8a50be0c6869bc15e6417459be49e9ade2",
+  "releaseArchive": "PkgTool-0.2.231.zip",
+  "releaseSha256": "c639e591e35c2431f68410d1771541d95f7308863638f9e3a6eedf1818530097",
+  "files": {
+    "LibOrbisPkg.dll": "787057748be8c43fb2562ca6a47f664e86169a95671b646df60f042da862ef1d",
+    "kaliw-pkg.exe": "9586eb9bfa3db6eabc1c5fd8b9b450f39cb5e4b509acea0c0562f2cc74cb6d2d"
+  },
+  "helperSource": "native/kaliw-pkg.cs",
+  "helperBuild": "scripts/build-pkg-tools.ps1",
+  "linking": "Dynamically linked replaceable .NET assembly"
+}
