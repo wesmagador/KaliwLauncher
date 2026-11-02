@@ -1,7 +1,8 @@
-# KaliwLauncher 0.1.0
+# KaliwLauncher 0.2.0
 
-- Primeira interface Kaliw com vídeo de abertura, carrossel de consoles e biblioteca local de PS1 e PS2.
-- Importação e remoção de jogos, seleção de executáveis externos e opção de boot completo.
-- Nesta versão os emuladores precisam ser configurados separadamente; ainda não existem motores integrados.
+- Carrossel com uma capa por console configurado e telas de orientação quando não há emulador ou jogos.
+- Quatro temas, estilos de capas e intensidade das animações configuráveis, com preferências locais.
+- Efeitos visuais de interação e respeito à preferência de movimento reduzido.
+- Mantém a execução por emuladores externos; os motores integrados chegam na 0.3.0.
 
-As fontes anexadas foram recuperadas do app.asar do executável original. Esse arquivo preserva o código distribuído, mas não recupera os arquivos de desenvolvimento que não foram empacotados.
+As fontes anexadas foram recuperadas do app.asar do executável original; arquivos de desenvolvimento ausentes do pacote não foram reconstruídos.
