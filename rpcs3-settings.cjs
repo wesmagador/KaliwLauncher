@@ -1,0 +1,3 @@
+const fs=require('node:fs/promises'),path=require('node:path');
+async function prepare(storage){const dir=path.join(storage,'GuiConfigs');await fs.mkdir(dir,{recursive:true});const file=path.join(dir,'CurrentSettings.ini');let ini='';try{ini=await fs.readFile(file,'utf8');}catch(e){if(e.code!=='ENOENT')throw e;}const section=/^\[main_window\][\s\S]*?(?=^\[|(?![\s\S]))/gm;const patch=body=>/^infoBoxEnabledWelcome=/m.test(body)?body.replace(/^infoBoxEnabledWelcome=.*$/gm,'infoBoxEnabledWelcome=false'):body.trimEnd()+'\ninfoBoxEnabledWelcome=false\n\n';ini=section.test(ini)?ini.replace(section,patch):ini.trimEnd()+'\n\n[main_window]\ninfoBoxEnabledWelcome=false\n';await fs.writeFile(file,ini);return file;}
+module.exports={prepare};

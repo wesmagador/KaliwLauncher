@@ -1,12 +1,12 @@
 {
   "name": "kaliw-launcher",
-  "version": "0.12.0",
+  "version": "0.13.0",
   "private": true,
   "description": "KaliwLauncher \u2014 sua pr\u00f3xima dimens\u00e3o de jogo",
   "main": "main.cjs",
   "scripts": {
     "start": "electron .",
-    "check": "node --check main.cjs && node --check preload.cjs && node --check renderer.js && node --check engine-manager.cjs && node --check online-manager.cjs && node --check online-ui.js && node --check input-config.cjs && node --check input-devices.cjs && node --check controls-ui.js && node --check disc-session.cjs && node --check optical-reader.cjs && node --check session-ui.js && node --check shortcuts.js && node --check navigation-ui.js && node --check quick-menu-manager.cjs && node --check quick-preload.cjs && node --check quick-menu.js && node --check platforms.js && node --check accessibility-ui.js && node --check file-browser.cjs && node --check file-browser-ui.js && node --check bundled-assets.cjs && node --check modern-manager.cjs && node --check verified-archive.cjs && node --check optional-firmware.cjs && node --check firmware-ui.js && node --check compatibility-manager.cjs && node --check compatibility-ui.js && node --check mods-manager.cjs && node --check mods-ui.js && node --check logs-manager.cjs && node --check logs-ui.js && node --check arcade-manager.cjs && node --check arcade-controls.cjs && node --check game-metadata.cjs && node --check ps3-iso.cjs && node --check game-import-manager.cjs && node --check wii-pointer.cjs",
+    "check": "node --check main.cjs && node --check preload.cjs && node --check renderer.js && node --check engine-manager.cjs && node --check online-manager.cjs && node --check online-ui.js && node --check input-config.cjs && node --check input-devices.cjs && node --check controls-ui.js && node --check disc-session.cjs && node --check optical-reader.cjs && node --check session-ui.js && node --check shortcuts.js && node --check navigation-ui.js && node --check quick-menu-manager.cjs && node --check quick-preload.cjs && node --check quick-menu.js && node --check platforms.js && node --check accessibility-ui.js && node --check file-browser.cjs && node --check file-browser-ui.js && node --check bundled-assets.cjs && node --check modern-manager.cjs && node --check verified-archive.cjs && node --check optional-firmware.cjs && node --check firmware-ui.js && node --check compatibility-manager.cjs && node --check compatibility-ui.js && node --check mods-manager.cjs && node --check mods-ui.js && node --check logs-manager.cjs && node --check logs-ui.js && node --check arcade-manager.cjs && node --check arcade-controls.cjs && node --check game-metadata.cjs && node --check ps3-iso.cjs && node --check game-import-manager.cjs && node --check wii-pointer.cjs && node --check switch-controls.cjs && node --check rpcs3-settings.cjs && node --check startup-screen.cjs",
     "dist": "electron-builder --win portable",
     "test:engines": "node scripts/test-engines.cjs",
     "prepare:engines": "node scripts/prepare-engines.cjs && node scripts/prepare-notices.cjs && node scripts/prepare-vc-runtime.cjs",
@@ -64,7 +64,11 @@
       "game-metadata.cjs",
       "ps3-iso.cjs",
       "game-import-manager.cjs",
-      "wii-pointer.cjs"
+      "wii-pointer.cjs",
+      "switch-controls.cjs",
+      "rpcs3-settings.cjs",
+      "startup-screen.cjs",
+      "startup.html"
     ],
     "win": {
       "target": "portable"
