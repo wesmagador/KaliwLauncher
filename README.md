@@ -119,3 +119,7 @@ A biblioteca foca o primeiro jogo ao abrir; direcional/analógico percorre os jo
 
 ## Correção 0.9.5 — Importação de BIOS PS2
 O seletor e a busca por pasta reconhecem .ROM0, .bin, .rom e .bios para PS2, sem diferenciar maiúsculas e minúsculas. A imagem é validada pelo conteúdo e copiada para a pasta gerenciada como .bin; o original permanece intacto. ROM1, DIFF, NVM e MEC não são tratados como a BIOS principal.
+
+
+## Correção 0.9.6 — Tela preta no PS2
+PS2 usa Vulkan no frontend e no núcleo PCEE2, substituindo OpenGL que falhava ao criar contexto compartilhado WGL. O boot foi validado com BIOS do usuário em perfil isolado e imagem da tela de seleção de idioma. A sessão PS2 usa diretório de trabalho persistente para NVRAM/MEC. Logs priorizam o nível declarado pelo motor antes de estimar pelo texto.
