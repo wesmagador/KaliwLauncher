@@ -107,3 +107,7 @@ As revisões e SHA-256 dos novos motores e fontes estão em engines/multi-manife
 - Logs atualiza os registros recentes dos motores e stdout/stderr, com filtros por plataforma, origem, nível estimado e texto. Leitura limitada a 30 arquivos e 128 KB por arquivo; sequências hexadecimais longas são omitidas da exibição. Não é um trace completo de instruções.
 - Mods organiza patches importados por plataforma e jogo. IPS é aplicado a uma cópia de ROMs de cartucho de até 256 MB; o usuário deve verificar revisão/região/hash exigidos pelo autor. BPS/UPS/xdelta/PPF são armazenados, sem aplicação integrada nesta versão. O botão Comunidade abre um catálogo externo; não há sincronização automática de mods.
 - Inicialização dos novos motores e supervisor foram verificados; emulação de jogos comerciais e controle físico não foram validados nesta entrega.
+
+
+## Correção 0.9.3 — DualSense
+A detecção, navegação e remapeamento usam SDL2 em vez de consultar apenas XInput. O nome real do controle aparece em Ajustes. Os núcleos RetroArch também usam SDL2; configurações anteriores são traduzidas para o novo layout sem apagar os mapeamentos. DualSense: L1/R1 navegam entre abas; Options + Create abre o menu rápido por padrão. Reinicie o jogo após salvar mudanças de controle. Motores avançados continuam usando os seus perfis nativos.

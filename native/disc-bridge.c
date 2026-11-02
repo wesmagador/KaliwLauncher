@@ -38,7 +38,8 @@ static void poll(void){ULONGLONG now=GetTickCount64();if(close_at){if(now>=close
 #define R0(r,n,d) RETRO_API r n(void){r(*fn)(void)=symbol(#n);return fn?fn():d;}
 RETRO_API void retro_set_environment(retro_environment_t cb){frontend=cb;void(*fn)(retro_environment_t)=symbol("retro_set_environment");if(fn)fn(environment);}
 RETRO_API void retro_init(void){wchar_t ipcw[32768];GetEnvironmentVariableW(L"KALIW_BRIDGE",ipcw,32768);WideCharToMultiByte(CP_UTF8,0,ipcw,-1,ipc,sizeof(ipc),NULL,NULL);snprintf(request,sizeof(request),"%s/request.txt",ipc);snprintf(response,sizeof(response),"%s/response.txt",ipc);void(*fn)(void)=symbol("retro_init");if(fn)fn();menu_init();}
-V0(retro_deinit) V0(retro_reset) V0(retro_unload_game) V0(retro_cheat_reset)
+RETRO_API void retro_deinit(void){menu_sdl_shutdown();void(*fn)(void)=symbol("retro_deinit");if(fn)fn();}
+V0(retro_reset) V0(retro_unload_game) V0(retro_cheat_reset)
 RETRO_API void retro_run(void){static bool started=false;if(!started){void(*first)(void)=symbol("retro_run");if(first)first();started=true;}poll_menu_hotkey();poll();if(menu_paused){if(video_cb&&last_width)video_cb(NULL,last_width,last_height,last_pitch);Sleep(5);return;}void(*fn)(void)=symbol("retro_run");if(fn)fn();}
 R0(unsigned,retro_api_version,1) R0(unsigned,retro_get_region,0) R0(size_t,retro_serialize_size,0)
 V1(retro_get_system_info,struct retro_system_info*,info) V1(retro_get_system_av_info,struct retro_system_av_info*,info)
