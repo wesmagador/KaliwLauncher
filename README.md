@@ -6,6 +6,8 @@ Aplicativo portátil para Windows x64 com interface Kaliw e motores de emulaçã
 
 Baixe o executável portátil e o pacote de fontes na [release 0.14.0](https://github.com/wesmagador/KaliwLauncher/releases/tag/v0.14.0). Feche versões anteriores antes de abrir o novo executável.
 
+As mudanças de cada versão estão no [histórico de versões](CHANGELOG.md). As [releases anteriores](https://github.com/wesmagador/KaliwLauncher/releases) preservam os executáveis originais e seus pacotes de fontes.
+
 Este repositório contém o código do launcher, ferramentas nativas, testes, vídeo original, catálogo de compatibilidade e metadados/licenças dos motores. Os binários dos motores, dependências instaladas, extrações temporárias e pacotes de distribuição ficam fora do Git. O pacote de fontes da release também inclui as fontes de terceiros preparadas para esta distribuição. Jogos comerciais, BIOS proprietárias, chaves, saves e dados pessoais não são distribuídos.
 
 Para desenvolvimento, use Node.js e npm no Windows x64, execute `npm ci` e `npm run check`. A emulação e o empacotamento exigem preparar os motores com os scripts em `scripts/` e compilar as ferramentas nativas; consulte os manifestos em `engines/` para versões e hashes da distribuição. Alguns scripts de preparação ainda dependem de caches/caminhos locais e de arquivos upstream disponíveis; o checkout sozinho não contém os runtimes prontos para emular. Não atualize hashes automaticamente quando um download mudar.
