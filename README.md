@@ -157,3 +157,9 @@ PS4 aceita PKG base e atualização legíveis pelo importador. Selecione ambos j
 A importação mostra progresso, preserva os arquivos originais e usa espaço adicional em emulation/installed. A extração não garante compatibilidade de emulação. Testes com os arquivos fornecidos reconheceram Miyazato (BLJM60007), Sonic Mania (CUSA07023, versão 01.03) e a configuração Nunchuk gerada pelo Dolphin. Não foi validada a jogabilidade de PS3/PS4 nem entrada física durante essa verificação de Wii.
 
 LibOrbisPkg v0.2, LGPL-3.0, é carregada dinamicamente pelo auxiliar Kaliw. A DLL pode ser substituída por versão compatível; o auxiliar pode ser recompilado usando scripts/build-pkg-tools.ps1. Fontes correspondentes e licenças acompanham o pacote de fontes; engines/pkg-manifest.json fixa as revisões e hashes.
+
+
+## Correção 0.11.1 — Menu rápido no MAME nativo
+O supervisor agora ativa o menu antes de suspender o processo do motor: suspender a janela em primeiro plano antes da troca de foco podia impedir a exibição do menu no Windows. O menu usa prioridade superior e o MAME inicia em janela maximizada para permitir a sobreposição. Create + Options / Ctrl direito + Enter continuam sendo os atalhos padrão, remapeáveis em Ajustes.
+
+Validação: jogo real MAME 0.174 em primeiro plano, combinação de teclado injetada pelo Windows, menu com foco confirmado, biblioteca da plataforma, retomada da mesma sessão e encerramento. Pausa/retomada do supervisor e remapeamento também passaram. O teste automatizado não pressionou os botões físicos do DualSense; o caminho de leitura SDL do controle permanece o mesmo.

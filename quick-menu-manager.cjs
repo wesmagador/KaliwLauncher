@@ -10,13 +10,13 @@ class QuickMenuManager{
 
  async state(){const session=this.options.session();let saved=null;if(session&&session.saveStates!==false){try{const stat=await fs.stat(await this.options.stateFile());saved={modified:stat.mtime.toISOString(),bytes:stat.size};}catch(e){if(e.code!=='ENOENT')throw e;}}return {visible:!!(this.window&&!this.window.isDestroyed()&&this.window.isVisible()),session,saved,shortcuts:this.options.shortcuts(),busy:this.busy,theme:this.options.theme?.()||'kaliw'};}
 
- async open(alreadyPaused=false,rect=null){if(!this.options.session()||!this.bridge)return;if(!this.options.ready()){if(alreadyPaused)await this.bridge.command('RESUME');return;}if(this.opening)return;this.opening=true;this.wanted=true;try{if(!alreadyPaused)await this.bridge.command('PAUSE');if(!this.wanted||!this.options.session())return;
+ async open(alreadyPaused=false,rect=null){if(!this.options.session()||!this.bridge)return;if(!this.options.ready()){if(alreadyPaused)await this.bridge.command('RESUME');return;}if(this.opening)return;this.opening=true;this.wanted=true;try{const native=!!this.options.session()?.modern;if(!native&&!alreadyPaused)await this.bridge.command('PAUSE');if(!this.wanted||!this.options.session())return;
 
  const display=rect&&Number.isFinite(rect.x)&&Number.isFinite(rect.y)&&rect.width>0&&rect.height>0?screen.getDisplayMatching(rect):screen.getPrimaryDisplay();
 
  if(!this.window||this.window.isDestroyed()){const window=new BrowserWindow({show:false,frame:false,transparent:true,backgroundColor:'#00000000',alwaysOnTop:true,skipTaskbar:true,resizable:false,movable:false,hasShadow:false,bounds:display.bounds,webPreferences:{preload:path.join(__dirname,'quick-preload.cjs'),contextIsolation:true,nodeIntegration:false,sandbox:true,backgroundThrottling:false}});this.window=window;window.webContents.setWindowOpenHandler(()=>({action:'deny'}));window.webContents.on('will-navigate',event=>event.preventDefault());window.on('close',event=>{if(this.options.session()){event.preventDefault();this.close(true).catch(e=>this.options.onError?.(e));}});await window.loadFile(path.join(__dirname,'quick-menu.html'));}
 
- if(!this.wanted||!this.options.session())return;await this.bridge.command('OVERLAY',this.window.getNativeWindowHandle().readBigUInt64LE(0).toString());this.window.setBounds(display.bounds);this.window.webContents.send('quick-changed',await this.state());this.window.show();this.window.focus();await this.bridge.command('FOCUS_MENU');
+ if(!this.wanted||!this.options.session())return;await this.bridge.command('OVERLAY',this.window.getNativeWindowHandle().readBigUInt64LE(0).toString());this.window.setAlwaysOnTop(true,'screen-saver');this.window.setBounds(display.bounds);this.window.webContents.send('quick-changed',await this.state());this.window.show();this.window.moveTop();this.window.focus();await this.bridge.command('FOCUS_MENU');if(native&&this.wanted&&this.options.session())await this.bridge.command('PAUSE');
 
  }catch(e){this.wanted=false;if(this.bridge)await this.bridge.command('RESUME').catch(()=>{});throw e;}finally{this.opening=false;}}
 
