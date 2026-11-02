@@ -1,0 +1,24 @@
+
+
+KaliwLauncher 0.9.0 — Additional bundled engines
+ps3 build-39fe6c2599f3f03b68940df1cad22305e78106b9
+Source: https://codeload.github.com/RPCS3/rpcs3/zip/39fe6c2599f3f03b68940df1cad22305e78106b9
+Source SHA256: 1811c7be9f4a3111d317ae991fccadcae524a5d870a1c4f79238914b64f210d1
+Archive: modern-ps3-39fe6c2599f3f03b68940df1cad22305e78106b9.zip
+License: engines/licenses/modern-ps3-LICENSE (Switch: LICENSE.txt)
+ps4 v.0.20.0
+Source: https://codeload.github.com/shadps4-emu/shadPS4/zip/v.0.20.0
+Source SHA256: c0b8bc3f5ddcef97cb87a82e7ddadbee2e9811dee39e757ae45f9d9fdcf4cb11
+Archive: modern-ps4-v.0.20.0.zip
+License: engines/licenses/modern-ps4-LICENSE (Switch: LICENSE.txt)
+x360 291f0c9
+Source: https://codeload.github.com/xenia-canary/xenia-canary/zip/291f0c9be398a3e0a0e29f378cbd564fa28c55a9
+Source SHA256: bb66d6fba3158db2d3539aeab58ed313fa47c8f40ec21c367caa739453490859
+Archive: modern-x360-291f0c9be398a3e0a0e29f378cbd564fa28c55a9.zip
+License: engines/licenses/modern-x360-LICENSE (Switch: LICENSE.txt)
+switch v0.2.1
+Source: https://git.eden-emu.dev/eden-emu/eden/archive/v0.2.1.zip
+Source SHA256: dfc63b425161a73ad8ad72cb503d8d65b47b568f6b2176ccc105697ab92d79b7
+Archive: modern-switch-v0.2.1.zip
+License: engines/licenses/modern-switch-LICENSE (Switch: LICENSE.txt)
+Compatibility metadata: libretro-database title catalogs; RPCS3 compatibility API; shadPS4 official Windows reports; Xenia Canary public issues; Eden v0.2.1 compatibility list. Records are reports, not guarantees.

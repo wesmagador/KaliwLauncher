@@ -1,0 +1,39 @@
+{
+  "generatedAt": "2026-10-25T19:28:45.658Z",
+  "runtime": {
+    "name": "RetroArch",
+    "version": "1.22.2",
+    "source": "https://github.com/libretro/RetroArch/tree/v1.22.2"
+  },
+  "cores": {
+    "ps1": {
+      "name": "SwanStation",
+      "file": "swanstation_libretro.dll",
+      "source": "https://github.com/libretro/swanstation/tree/631f0fb31b809e0f889d7c551fe695788e39c1d3",
+      "version": "1.0.0 631f0fb"
+    },
+    "ps2": {
+      "name": "PCEE2",
+      "file": "pcee2_libretro.dll",
+      "source": "https://github.com/WizzardSK/pcee2-libretro/tree/f52b5a6fe43278dcfc827b85b09fced5a82f863f",
+      "version": "v2.9.138"
+    }
+  },
+  "artifacts": [
+    {
+      "name": "RetroArch.7z",
+      "url": "https://buildbot.libretro.com/stable/1.22.2/windows/x86_64/RetroArch.7z",
+      "sha256": "b2139b1d0f9d4526dc6b5ce23cbb3efdc766096fa6f2c3df016818b486ac6372"
+    },
+    {
+      "name": "swanstation.zip",
+      "url": "https://buildbot.libretro.com/nightly/windows/x86_64/latest/swanstation_libretro.dll.zip",
+      "sha256": "e716f609fa832f7b94739bdd4c19fe6975f58dccba2387523e2d9f20ebac7622"
+    },
+    {
+      "name": "pcee2.zip",
+      "url": "https://buildbot.libretro.com/nightly/windows/x86_64/latest/pcee2_libretro.dll.zip",
+      "sha256": "43435019e00538032422e86f73223b3a5d73a3298fb786c56e1d053678f15abf"
+    }
+  ]
+}

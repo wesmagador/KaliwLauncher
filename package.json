@@ -1,12 +1,12 @@
 {
   "name": "kaliw-launcher",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "private": true,
   "description": "KaliwLauncher — sua próxima dimensão de jogo",
   "main": "main.cjs",
   "scripts": {
     "start": "electron .",
-    "check": "node --check main.cjs && node --check preload.cjs && node --check renderer.js && node --check engine-manager.cjs && node --check online-manager.cjs && node --check online-ui.js && node --check input-config.cjs && node --check input-devices.cjs && node --check controls-ui.js && node --check disc-session.cjs && node --check optical-reader.cjs && node --check session-ui.js && node --check shortcuts.js && node --check navigation-ui.js && node --check quick-menu-manager.cjs && node --check quick-preload.cjs && node --check quick-menu.js && node --check platforms.js && node --check accessibility-ui.js && node --check file-browser.cjs && node --check file-browser-ui.js && node --check bundled-assets.cjs",
+    "check": "node --check main.cjs && node --check preload.cjs && node --check renderer.js && node --check engine-manager.cjs && node --check online-manager.cjs && node --check online-ui.js && node --check input-config.cjs && node --check input-devices.cjs && node --check controls-ui.js && node --check disc-session.cjs && node --check optical-reader.cjs && node --check session-ui.js && node --check shortcuts.js && node --check navigation-ui.js && node --check quick-menu-manager.cjs && node --check quick-preload.cjs && node --check quick-menu.js && node --check platforms.js && node --check accessibility-ui.js && node --check file-browser.cjs && node --check file-browser-ui.js && node --check bundled-assets.cjs && node --check modern-manager.cjs && node --check verified-archive.cjs && node --check optional-firmware.cjs && node --check firmware-ui.js && node --check compatibility-manager.cjs && node --check compatibility-ui.js && node --check mods-manager.cjs && node --check mods-ui.js && node --check logs-manager.cjs && node --check logs-ui.js",
     "dist": "electron-builder --win portable",
     "test:engines": "node scripts/test-engines.cjs",
     "prepare:engines": "node scripts/prepare-engines.cjs && node scripts/prepare-notices.cjs && node scripts/prepare-vc-runtime.cjs",
@@ -48,7 +48,17 @@
       "accessibility-ui.js",
       "file-browser.cjs",
       "file-browser-ui.js",
-      "bundled-assets.cjs"
+      "bundled-assets.cjs",
+      "modern-manager.cjs",
+      "verified-archive.cjs",
+      "optional-firmware.cjs",
+      "firmware-ui.js",
+      "compatibility-manager.cjs",
+      "compatibility-ui.js",
+      "mods-manager.cjs",
+      "mods-ui.js",
+      "logs-manager.cjs",
+      "logs-ui.js"
     ],
     "win": {
       "target": "portable"
@@ -81,7 +91,17 @@
           "cores/mame2003_plus_libretro.dll",
           "cores/dolphin_libretro.dll",
           "cores/cemu_libretro.dll",
-          "cores/kaliw_discbridge_libretro.dll"
+          "cores/kaliw_discbridge_libretro.dll",
+          "modern/*.zip",
+          "modern-manifest.json",
+          "kaliw-engine-host.exe"
+        ]
+      },
+      {
+        "from": "compatibility",
+        "to": "compatibility",
+        "filter": [
+          "catalog.json.gz"
         ]
       }
     ],

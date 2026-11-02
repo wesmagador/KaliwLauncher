@@ -14,7 +14,7 @@ const line = (key,value) => `${key} = ${quote(value)}`;
 
 class EngineManager {
 
- constructor(bundle,data){this.bundle=bundle;this.data=data;this.system=path.join(data,'system');}
+ constructor(bundle,data){this.bundle=bundle;this.data=data;this.system=path.join(data,'system');this.modern=new (require('./modern-manager.cjs').ModernManager)(bundle,data);}
 
  check(id){if(!engines[id])throw Error('Console inválido');return engines[id];}
 
@@ -22,13 +22,13 @@ class EngineManager {
 
  isBios(id,data){return id==='ps1'?data.length===524288&&(data.includes(Buffer.from('Sony Computer Entertainment'))||this.isOpenBios(data)):id==='ps2'&&data.length===4194304&&data.includes(Buffer.from('ROMDIR'))&&data.includes(Buffer.from('RESET'));}
 
- async status(){const result={};for(const [id,engine] of Object.entries(engines)){let available=true;for(const f of ['retroarch.exe',path.join('cores',engine.file)]){try{await fs.access(path.join(this.bundle,f));}catch{available=false;}}
+ async status(){const result={};for(const [id,engine] of Object.entries(engines)){if(engine.modern){result[id]=await this.modern.status(id);continue;}let available=true;for(const f of ['retroarch.exe',path.join('cores',engine.file)]){try{await fs.access(path.join(this.bundle,f));}catch{available=false;}}
 
  const dir=id==='ps1'?this.system:path.join(this.system,'pcsx2','bios');let bios=[];if(engine.bios)try{bios=(await fs.readdir(dir)).filter(f=>/\.bin$/i.test(f));}catch{}
 
  let biosLabels={};try{biosLabels=JSON.parse(await fs.readFile(path.join(dir,'bios-labels.json'),'utf8'));}catch{}
 
- result[id]={name:engine.name,available,bios,biosLabels,requiresBios:!!engine.bios,boot:!!engine.boot,disc:!!engine.disc,saveStates:!engine.noStates};}return result;}
+ result[id]={name:engine.name,available,bios,biosLabels,optionalFirmware:await require('./optional-firmware.cjs').files(this.system,id),requiresBios:!!engine.bios,boot:!!engine.boot,disc:!!engine.disc,saveStates:!engine.noStates};}return result;}
 
  async importBios(id,files){if(!this.check(id).bios)throw Error('Esta plataforma não usa importação de BIOS.');const dir=id==='ps1'?this.system:path.join(this.system,'pcsx2','bios');await fs.mkdir(dir,{recursive:true});let count=0;
 
@@ -64,7 +64,7 @@ class EngineManager {
 
  }
 
- async prepare(id,game,fullboot,preferences={}){const engine=this.check(id);const status=(await this.status())[id];if(!status.available)throw Error('Motor integrado ausente. Use o pacote completo do Kaliw.');if(engine.bios&&!status.bios.length)throw Error(`Importe sua BIOS de ${id.toUpperCase()} no menu BIOS antes de jogar.`);
+ async prepare(id,game,fullboot,preferences={}){const engine=this.check(id);if(engine.modern)return this.modern.prepare(id,game,preferences);const status=(await this.status())[id];if(!status.available)throw Error('Motor integrado ausente. Use o pacote completo do Kaliw.');if(engine.bios&&!status.bios.length)throw Error(`Importe sua BIOS de ${id.toUpperCase()} no menu BIOS antes de jogar.`);
 
  if(!game&&!engine.boot)throw Error('Escolha um jogo desta plataforma na aba Jogos.');
 
@@ -96,7 +96,7 @@ class EngineManager {
 
  const controls=require('./input-config.cjs').generate(preferences.controls,id);
 
- const opts=[...controls.options,line('mupen64plus-rdp-plugin','gliden64'),line('dolphin_cpu_core','JIT64'),line('dolphin_renderer','Hardware'),line('swanstation_BIOS_PatchFastBoot',fullboot?'false':'true'),line('swanstation_GPU_Renderer','Software'),line('pcsx2_renderer','opengl'),line('pcsx2_fast_boot',fullboot?'disabled':'enabled'),line('pcsx2_bios',chosen||status.bios[0])];
+ const opts=[...controls.options,line('gambatte_gb_bootloader','enabled'),line('mgba_use_bios','ON'),line('gearsystem_bios_sms',(await require('./optional-firmware.cjs').files(this.system,'sms')).length?'Enabled':'Disabled'),line('mupen64plus-rdp-plugin','gliden64'),line('dolphin_cpu_core','JIT64'),line('dolphin_renderer','Hardware'),line('swanstation_BIOS_PatchFastBoot',fullboot?'false':'true'),line('swanstation_GPU_Renderer','Software'),line('pcsx2_renderer','opengl'),line('pcsx2_fast_boot',fullboot?'disabled':'enabled'),line('pcsx2_bios',chosen||status.bios[0])];
 
  // Empty region overrides let SwanStation identify the correct BIOS by its
 

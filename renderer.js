@@ -30,7 +30,9 @@ async function action(fn){try{await fn();}catch(e){toast(e.message||String(e));}
 
 function selected(){return items[index];}
 
-function render(){
+function render(){if(typeof logsView!=='undefined'&&logsView){window.syncNavigation?.();return;}
+ if(typeof modsView!=='undefined'&&modsView){window.renderSession?.();window.syncNavigation?.();return;}
+ if(typeof compatibilityView!=='undefined'&&compatibilityView){window.renderSession?.();window.syncNavigation?.();return;}
 
  $('settings').hidden=!settingsView;document.querySelector('.heading').hidden=settingsView;document.querySelector('main > .eyebrow').hidden=settingsView;
 
@@ -86,13 +88,13 @@ async function importGames(){await action(async()=>{if(!api)return toast('A impo
 
 function refreshEngines(){}
 
-function settings(){settingsView=true;hubView=null;$('fullboot').checked=config.fullboot;window.openControlSettings?.();render();window.scrollTo({top:0,behavior:'smooth'});}
+function settings(){window.closeCompatibility?.();window.closeMods?.();window.closeLogs?.();settingsView=true;hubView=null;$('fullboot').checked=config.fullboot;window.openControlSettings?.();render();window.scrollTo({top:0,behavior:'smooth'});}
 
 let startingSession=false;
 
 async function launchSession(id,game){if(startingSession)return;if(config.engines?.[id]?.requiresBios!==false&&!config.engines?.[id]?.bios.length){openHub('bios');return toast('Importe sua BIOS de '+id.toUpperCase()+' para continuar.');}startingSession=true;$('enter').disabled=true;$('enter').textContent='Iniciando jogo…';try{const result=await api.launch(id,game);if(result?.session)config.session=result.session;window.renderSession?.();if(result?.inserted)toast('CD/DVD inserido no console em execução.');}finally{startingSession=false;$('enter').disabled=false;render();}}
 
-function home(){if(typeof cancelCapture==='function')cancelCapture();window.scrollTo({top:0,behavior:'instant'});settingsView=false;hubView=null;view='consoles';index=Math.max(0,consoles.filter(c=>config.emulators[c.id]).findIndex(c=>c.id===consoleId));render();}
+function home(){window.closeCompatibility?.();window.closeMods?.();window.closeLogs?.();if(typeof cancelCapture==='function')cancelCapture();window.scrollTo({top:0,behavior:'instant'});settingsView=false;hubView=null;view='consoles';index=Math.max(0,consoles.filter(c=>config.emulators[c.id]).findIndex(c=>c.id===consoleId));render();}
 
 $('home').onclick=home;$('libraryNav').onclick=()=>{if(!config.emulators[consoleId])consoleId=consoles.find(c=>config.emulators[c.id])?.id||'ps2';view='games';index=0;render();};$('prev').onclick=()=>move(-1);$('next').onclick=()=>move(1);$('enter').onclick=enter;$('settingsNav').onclick=settings;$('closeSettings').onclick=()=>home();$('bios').onclick=()=>view==='games'||!selected().boot?importGames():action(async()=>{if(!api)return toast('Abra pelo aplicativo para iniciar o boot.');await launchSession(selected().id);});
 

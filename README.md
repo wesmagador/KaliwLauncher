@@ -98,3 +98,12 @@ PS3, PS4, Xbox 360, Switch e Xbox One ainda não foram integrados e não aparece
 Validação: 11 DLLs reais carregadas; programas de teste próprios de NES, GB, GBA, Master System e Atari executados com pausa e save/load. Teste do aplicativo com importação pelo navegador interno, início de NES sem BIOS, save/load pelo menu, persistência dos controles e retorno ao launcher. Testes da interface cobrem ajustes diretos, seleção/barra, navegação espacial, confirmação e teclado virtual. Não havia controle XInput conectado. Gameplay N64, arcade, Wii e Wii U ainda requer teste com jogos e hardware do usuário.
 
 As revisões e SHA-256 dos novos motores e fontes estão em engines/multi-manifest.json e scripts/multi-core-pins.json. As fontes correspondentes acompanham o executável; o Cemu informa uma revisão-base na versão, enquanto o port libretro é fixado separadamente. Não são distribuídos BIOS comerciais, chaves ou ROMs de terceiros.
+
+
+## Versão 0.9.0
+- RPCS3 (PS3), shadPS4 (PS4), Xenia Canary (Xbox 360) e Eden (Switch) incluídos, extraídos no primeiro uso. Veja engines/modern-manifest.json para versões, hashes e fontes. Xbox One permanece indisponível.
+- Esses motores usam seus próprios perfis de controle e configurações nativas; o menu rápido supervisiona a sessão, mas save state não está conectado nessas quatro integrações. Firmware, módulos e chaves necessários devem ser importados pelo usuário. RPCS3 exige o runtime Microsoft Visual C++ do sistema.
+- BIOS mostra todas as plataformas com a necessidade específica de cada uma. Compatibilidade apresenta um snapshot de títulos e relatos publicados: títulos sem avaliação não representam jogos testados. Cobertura PS4: Windows; Xenia: até 500 relatos recentes; Eden: snapshot 0.2.1.
+- Logs atualiza os registros recentes dos motores e stdout/stderr, com filtros por plataforma, origem, nível estimado e texto. Leitura limitada a 30 arquivos e 128 KB por arquivo; sequências hexadecimais longas são omitidas da exibição. Não é um trace completo de instruções.
+- Mods organiza patches importados por plataforma e jogo. IPS é aplicado a uma cópia de ROMs de cartucho de até 256 MB; o usuário deve verificar revisão/região/hash exigidos pelo autor. BPS/UPS/xdelta/PPF são armazenados, sem aplicação integrada nesta versão. O botão Comunidade abre um catálogo externo; não há sincronização automática de mods.
+- Inicialização dos novos motores e supervisor foram verificados; emulação de jogos comerciais e controle físico não foram validados nesta entrega.

@@ -1,0 +1,159 @@
+{
+  "downloadedAt": "2026-10-26T02:41:54.506Z",
+  "cores": [
+    {
+      "id": "gb",
+      "file": "gambatte_libretro.dll",
+      "url": "https://buildbot.libretro.com/nightly/windows/x86_64/latest/gambatte_libretro.dll.zip",
+      "sha256": "013872cb05cfbbf9573b00ac4aefcc9ecdf35d181ed01aec912e0608cdf8103c",
+      "repo": "libretro/gambatte-libretro",
+      "sourceRef": "7809bb68ee96c3e6c74e9d9c4c8bb09aa7c6801d",
+      "sourceArchive": "gambatte-7809bb68ee96c3e6c74e9d9c4c8bb09aa7c6801d.zip",
+      "sourceSha256": "5cf0ffa297dad944734b037a86d853b7ddbd300a498cc0b428b982e61384a18e",
+      "sourceUrl": "https://codeload.github.com/libretro/gambatte-libretro/zip/7809bb68ee96c3e6c74e9d9c4c8bb09aa7c6801d",
+      "nativeVersion": "v0.5.0-netlink 7809bb6",
+      "dllSha256": "fac8012dab2b133430992d22a4ad9fbf323cf8772fddf4b7b0066641a20d7ec4",
+      "infoSha256": "084975942c06a658972890c12a8251fe8d0f6c7ffd2b268850458628bbbe68f4",
+      "licenseFiles": [
+        "COPYING"
+      ]
+    },
+    {
+      "id": "gba",
+      "file": "mgba_libretro.dll",
+      "url": "https://buildbot.libretro.com/nightly/windows/x86_64/latest/mgba_libretro.dll.zip",
+      "sha256": "16b6f0b2ec365070a50747393eef5f63784dcf4abdbdb73e752cd39d1cb35e70",
+      "repo": "libretro/mgba",
+      "sourceRef": "7a12d6d4b9acb14c0ae62c9166b6a2f3d08007f6",
+      "sourceArchive": "mgba-7a12d6d4b9acb14c0ae62c9166b6a2f3d08007f6.zip",
+      "sourceSha256": "10a4f19327739dd912b5ece6aeec49d9bf859793f9ffc841df1dd0c9ea89c875",
+      "sourceUrl": "https://codeload.github.com/libretro/mgba/zip/7a12d6d4b9acb14c0ae62c9166b6a2f3d08007f6",
+      "nativeVersion": "0.11-212-7a12d6d",
+      "dllSha256": "5cac11c643d7f8dfa50c68855f2f2240ff7cc0b4cd0312dd9e17a639c85667e4",
+      "infoSha256": "64444beb8268d3a57d53a45564c55049f39ff621315401fef86e82f3849042d6",
+      "licenseFiles": [
+        "LICENSE"
+      ]
+    },
+    {
+      "id": "sms",
+      "file": "gearsystem_libretro.dll",
+      "url": "https://buildbot.libretro.com/nightly/windows/x86_64/latest/gearsystem_libretro.dll.zip",
+      "sha256": "9333865b92845bc39925b0fbe715c5afd1a0a114523740ddfdb16d8bb5ca3a10",
+      "repo": "drhelius/Gearsystem",
+      "sourceRef": "215c22f73d06871e12291025105c98470509468d",
+      "sourceArchive": "gearsystem-215c22f73d06871e12291025105c98470509468d.zip",
+      "sourceSha256": "3a414856f0101b8c2ba327ef4562da8741e41ed83dfa1b6d0bba5d95d0049fed",
+      "sourceUrl": "https://codeload.github.com/drhelius/Gearsystem/zip/215c22f73d06871e12291025105c98470509468d",
+      "nativeVersion": "3.9.23-10-g215c22f",
+      "dllSha256": "7bf36ea73b3e8a7f647be482f6cf7bcd4f87f176b586a62cbede034988f94a8f",
+      "infoSha256": "fcefd381377eee3487a722cc1ed71359a10481ce6bff9a12569efb96680e0a54",
+      "licenseFiles": [
+        "LICENSE"
+      ]
+    },
+    {
+      "id": "nes",
+      "file": "fceumm_libretro.dll",
+      "url": "https://buildbot.libretro.com/nightly/windows/x86_64/latest/fceumm_libretro.dll.zip",
+      "sha256": "9e96d55a4ff6c592fb974cd0192f7138f6c0a1864e1a079ba15367866a08998a",
+      "repo": "libretro/libretro-fceumm",
+      "sourceRef": "ac0d00a7fc01166f84c7bac01d1084ebfd2b865e",
+      "sourceArchive": "fceumm-ac0d00a7fc01166f84c7bac01d1084ebfd2b865e.zip",
+      "sourceSha256": "62ee00f82a0d94c9d36a3dc0d07e5dff24a395df66060d37cc6d443a29620efe",
+      "sourceUrl": "https://codeload.github.com/libretro/libretro-fceumm/zip/ac0d00a7fc01166f84c7bac01d1084ebfd2b865e",
+      "nativeVersion": "(SVN) ac0d00a",
+      "dllSha256": "318580e6a4cc3b8415d9cc225dc44f4244e4fcb8e2bf992607f070af5f1a1bf0",
+      "infoSha256": "eda6fbfdc1fda5ea80c2caed205345b0cbbfa9427acf3626e0cffd6ee5a96721",
+      "licenseFiles": [
+        "Copying"
+      ]
+    },
+    {
+      "id": "n64",
+      "file": "mupen64plus_next_libretro.dll",
+      "url": "https://buildbot.libretro.com/nightly/windows/x86_64/latest/mupen64plus_next_libretro.dll.zip",
+      "sha256": "388f0de34a6c611a38c985580427391a31fe49ddb2c1a1a41e791a52f2c7ff11",
+      "repo": "libretro/mupen64plus-libretro-nx",
+      "sourceRef": "15bada85906593376e8fd697f1b0b3af3a20f512",
+      "sourceArchive": "mupen64plus_next-15bada85906593376e8fd697f1b0b3af3a20f512.zip",
+      "sourceSha256": "1d934b964cb7f11d7d71464db11b3835e9327c31a3c35e9d9a9056b783acda7c",
+      "sourceUrl": "https://codeload.github.com/libretro/mupen64plus-libretro-nx/zip/15bada85906593376e8fd697f1b0b3af3a20f512",
+      "nativeVersion": "3.0-Vulkan 15bada8",
+      "dllSha256": "356fdea89ad37dd1677a863aa8947280ceae2ee18d7ec4a8eb4ba5a04d3bf3f8",
+      "infoSha256": "8d1fcd13a17310e233be4ff247bf1032f8f786fe685e24cef5ed4ea474ccdfb6",
+      "licenseFiles": [
+        "LICENSE"
+      ]
+    },
+    {
+      "id": "atari",
+      "file": "stella_libretro.dll",
+      "url": "https://buildbot.libretro.com/nightly/windows/x86_64/latest/stella_libretro.dll.zip",
+      "sha256": "24fde91f7ac7d2fb2205d5f6b8d3d2931d959400be79fc5dde0c1b5beb91d09a",
+      "repo": "libretro/stella",
+      "sourceRef": "9a7c60328a94a5a8947c01d7e6efef0a33475b54",
+      "sourceArchive": "stella-9a7c60328a94a5a8947c01d7e6efef0a33475b54.zip",
+      "sourceSha256": "4f4c79ab5b0d337bc056caeaf458389662de14faad1ddd9e0ddba8140c8f249c",
+      "sourceUrl": "https://codeload.github.com/libretro/stella/zip/9a7c60328a94a5a8947c01d7e6efef0a33475b54",
+      "nativeVersion": "8.0_pre 9a7c603",
+      "dllSha256": "f03e5e4f48938d3dcbbeb13d2796cdc8d9ecb0db9ea3cd80e0f57c6e0b157679",
+      "infoSha256": "ad01fae0d3c0b620a97fe84c5879ee96d241024f58f3d609cabb98eef6f67a35",
+      "licenseFiles": [
+        "Copyright.txt",
+        "License.txt"
+      ]
+    },
+    {
+      "id": "mame",
+      "file": "mame2003_plus_libretro.dll",
+      "url": "https://buildbot.libretro.com/nightly/windows/x86_64/latest/mame2003_plus_libretro.dll.zip",
+      "sha256": "051228e013311a52119ea63b2dcd64fb84867bba926f87193949efe8d912f7b7",
+      "repo": "libretro/mame2003-plus-libretro",
+      "sourceRef": "d373dcb4b13a3767108f91778ea965faad9578c7",
+      "sourceArchive": "mame2003_plus-d373dcb4b13a3767108f91778ea965faad9578c7.zip",
+      "sourceSha256": "e40c7d287621233ba3fa6ed46bc5d4d8929b791658a613cc8cf6cd747a227e2a",
+      "sourceUrl": "https://codeload.github.com/libretro/mame2003-plus-libretro/zip/d373dcb4b13a3767108f91778ea965faad9578c7",
+      "nativeVersion": "d373dcb",
+      "dllSha256": "ed3f52083a3f3467460b79da6acf421bd8c088b3235e1ec38476e34361b1a972",
+      "infoSha256": "ed78760537384f5d9d6fd334b8c618c8904ae437566dab3e64010ab249d12d45",
+      "licenseFiles": [
+        "LICENSE.md"
+      ]
+    },
+    {
+      "id": "wii",
+      "file": "dolphin_libretro.dll",
+      "url": "https://buildbot.libretro.com/nightly/windows/x86_64/latest/dolphin_libretro.dll.zip",
+      "sha256": "2d6d3e266e5192e753e799bd3fc01bb5dd47df142f6bd355384bf06ecd97c690",
+      "repo": "libretro/dolphin",
+      "sourceRef": "3aac3f052f733f8df2f1616843a4d2e14002ed11",
+      "sourceArchive": "dolphin-3aac3f052f733f8df2f1616843a4d2e14002ed11.zip",
+      "sourceSha256": "8968a4face3ae99dea51dad335538354ba79d21249bd3588cb7d44bf6487e4b8",
+      "sourceUrl": "https://codeload.github.com/libretro/dolphin/zip/3aac3f052f733f8df2f1616843a4d2e14002ed11",
+      "nativeVersion": "2609.0.158+3aac3f052f",
+      "dllSha256": "178b8ae5dc585b2533c5428bf8ff3921215a2a72f879131d4dc1d86109a2f80b",
+      "infoSha256": "8e4e763481ba4a44fa2421c33f79a4f011d3897542528dc876dda71e4c191346",
+      "licenseFiles": [
+        "COPYING"
+      ]
+    },
+    {
+      "id": "wiiu",
+      "file": "cemu_libretro.dll",
+      "url": "https://buildbot.libretro.com/nightly/windows/x86_64/latest/cemu_libretro.dll.zip",
+      "sha256": "cccc669575e538bda2ae5fd07ab7c359759452711d82fdcc7923308cd911f7e0",
+      "repo": "WizzardSK/cemu-libretro",
+      "sourceRef": "c9ff2361c7e236bbc66a17f02047fa41936da34d",
+      "sourceArchive": "cemu-c9ff2361c7e236bbc66a17f02047fa41936da34d.zip",
+      "sourceSha256": "b2872e7059c2725efa8b1cfa111d014d6f4b683c0b00354afcf34c7baba640b9",
+      "sourceUrl": "https://codeload.github.com/WizzardSK/cemu-libretro/zip/c9ff2361c7e236bbc66a17f02047fa41936da34d",
+      "nativeVersion": "2.6-372-g29f2f1fa",
+      "dllSha256": "87e70b25875f4301e919d83b41b42aa6281e06bbd6e38a61f4b9bab532e77b88",
+      "infoSha256": "08d3893153a02783df31f12a7f39273977fe40a7cfe6d2b320fd25d958be9876",
+      "licenseFiles": [
+        "LICENSE.txt"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "compiler": "Zig 0.15.2, cc -O2",
+  "source": [
+    "native/quick-menu.h",
+    "native/disc-bridge.c",
+    "native/disc-reader.c",
+    "native/libretro.h"
+  ],
+  "artifacts": [
+    {
+      "file": "cores/kaliw_discbridge_libretro.dll",
+      "sha256": "400c43a75d34d7f9e8265bd66f3fa06fea1cde0385b285c10d8b4dc198bd1b33"
+    },
+    {
+      "file": "kaliw-disc-reader.exe",
+      "sha256": "a2e8f1595ba30df94d3aba23c21d4f4159daf4ce576f75ceb9620ef409b83b27"
+    }
+  ]
+}

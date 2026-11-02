@@ -1,0 +1,52 @@
+{
+  "cores": [
+    {
+      "id": "ps3",
+      "tag": "build-39fe6c2599f3f03b68940df1cad22305e78106b9",
+      "sourceRepo": "RPCS3/rpcs3",
+      "sourceRef": "39fe6c2599f3f03b68940df1cad22305e78106b9",
+      "url": "https://github.com/RPCS3/rpcs3-binaries-win/releases/download/build-39fe6c2599f3f03b68940df1cad22305e78106b9/rpcs3-v0.0.43-20403-39fe6c25_win64_msvc.7z",
+      "downloadSha256": "e4858db6527a8662aebed200687675bc771fb5166d1dae4d49d517426b3325e2",
+      "sha256": "66b001c8802c3a3fab84098c1eeb9df3bde7f37333933c7d888efa8503c31337",
+      "sourceArchive": "modern-ps3-39fe6c2599f3f03b68940df1cad22305e78106b9.zip",
+      "sourceUrl": "https://codeload.github.com/RPCS3/rpcs3/zip/39fe6c2599f3f03b68940df1cad22305e78106b9",
+      "sourceSha256": "1811c7be9f4a3111d317ae991fccadcae524a5d870a1c4f79238914b64f210d1"
+    },
+    {
+      "id": "ps4",
+      "tag": "v.0.20.0",
+      "sourceRepo": "shadps4-emu/shadPS4",
+      "sourceRef": "v.0.20.0",
+      "url": "https://github.com/shadps4-emu/shadPS4/releases/download/v.0.20.0/shadps4-win64-sdl-2026-0.20.0.zip",
+      "downloadSha256": "d5cdc55c57e85e5fe44ff867b420246dc832077356d943ccc43c5d950c878b37",
+      "sha256": "12f9a5d12d0b11a879ff06318122e35f957dc96ad8649027091c0d0c6e50193a",
+      "sourceArchive": "modern-ps4-v.0.20.0.zip",
+      "sourceUrl": "https://codeload.github.com/shadps4-emu/shadPS4/zip/v.0.20.0",
+      "sourceSha256": "c0b8bc3f5ddcef97cb87a82e7ddadbee2e9811dee39e757ae45f9d9fdcf4cb11"
+    },
+    {
+      "id": "x360",
+      "tag": "291f0c9",
+      "sourceRepo": "xenia-canary/xenia-canary",
+      "sourceRef": "291f0c9be398a3e0a0e29f378cbd564fa28c55a9",
+      "url": "https://github.com/xenia-canary/xenia-canary/releases/download/291f0c9/xenia_canary_windows.7z",
+      "downloadSha256": "1b854b271ed42ece3bfa546adbd1331fe93e34a43788515a3318974003a5b71c",
+      "sha256": "a7b876931bd98a2f28d706762a982d4ffe6461fc0f42a5ba718c4a482396ec13",
+      "sourceArchive": "modern-x360-291f0c9be398a3e0a0e29f378cbd564fa28c55a9.zip",
+      "sourceUrl": "https://codeload.github.com/xenia-canary/xenia-canary/zip/291f0c9be398a3e0a0e29f378cbd564fa28c55a9",
+      "sourceSha256": "bb66d6fba3158db2d3539aeab58ed313fa47c8f40ec21c367caa739453490859"
+    },
+    {
+      "id": "switch",
+      "tag": "v0.2.1",
+      "url": "https://stable.eden-emu.dev/v0.2.1/Eden-Windows-v0.2.1-amd64-msvc-standard.zip",
+      "downloadSha256": "ff498e5da9630216926ac3cbe9fb493b14930665c728a40a8f5b59507fdd7ebf",
+      "sha256": "ff498e5da9630216926ac3cbe9fb493b14930665c728a40a8f5b59507fdd7ebf",
+      "sourceRepo": "https://git.eden-emu.dev/eden-emu/eden",
+      "sourceRef": "v0.2.1",
+      "sourceArchive": "modern-switch-v0.2.1.zip",
+      "sourceUrl": "https://git.eden-emu.dev/eden-emu/eden/archive/v0.2.1.zip",
+      "sourceSha256": "dfc63b425161a73ad8ad72cb503d8d65b47b568f6b2176ccc105697ab92d79b7"
+    }
+  ]
+}
