@@ -1,0 +1,2 @@
+const {contextBridge,ipcRenderer}=require('electron');
+contextBridge.exposeInMainWorld('kaliw',{read:()=>ipcRenderer.invoke('read'),emulator:id=>ipcRenderer.invoke('emulator',id),import:id=>ipcRenderer.invoke('import',id),remove:id=>ipcRenderer.invoke('remove',id),bootMode:value=>ipcRenderer.invoke('boot-mode',value),launch:(id,game)=>ipcRenderer.invoke('launch',id,game),saveVideo:buffer=>ipcRenderer.invoke('save-video',buffer),onReturned:fn=>ipcRenderer.on('returned',()=>fn())});

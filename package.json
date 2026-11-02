@@ -1,0 +1,7 @@
+{
+  "name": "kaliw-launcher",
+  "version": "0.1.0",
+  "private": true,
+  "description": "KaliwLauncher — sua próxima dimensão de jogo",
+  "main": "main.cjs"
+}
