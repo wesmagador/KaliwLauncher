@@ -1,9 +1,10 @@
-const {app,BrowserWindow,ipcMain,dialog,shell}=require('electron');
+const {app,BrowserWindow,ipcMain,dialog,shell,net}=require('electron');
 const fs=require('node:fs/promises');
 const path=require('node:path');
 const {spawn}=require('node:child_process');
 const {EngineManager}=require('./engine-manager.cjs');
-let win,session=null,launching=false,manager;
+const {OnlineManager}=require('./online-manager.cjs');
+let win,session=null,launching=false,manager,online;
 const defaults=()=>({games:[],fullboot:true});
 const configPath=()=>path.join(app.getPath('userData'),'library.json');
 async function raw(){try{return {...defaults(),...JSON.parse(await fs.readFile(configPath(),'utf8'))};}catch(e){if(e.code==='ENOENT')return defaults();throw e;}}
@@ -12,6 +13,7 @@ let saveQueue=Promise.resolve();
 function update(change){const task=saveQueue.then(async()=>{const c=await raw();await change(c);await fs.mkdir(app.getPath('userData'),{recursive:true});await fs.writeFile(configPath()+'.tmp',JSON.stringify(c,null,2));await fs.rename(configPath()+'.tmp',configPath());return read();});saveQueue=task.catch(()=>{});return task;}
 app.whenReady().then(()=>{
  manager=new EngineManager(app.isPackaged?path.join(process.resourcesPath,'engines'):path.join(__dirname,'engines'),path.join(app.getPath('userData'),'emulation'));
+ online=new OnlineManager({data:manager.data,engines:manager,fetcher:(url,options)=>net.fetch(url,options),install:async(entry,file)=>{if(entry.kind==='bios'){if(session||launching)throw Error('Feche o jogo para instalar a BIOS.');await manager.importBios(entry.console,[file]);}else await update(c=>{if(!c.games.some(g=>g.catalogId===entry.id||g.path===file))c.games.push({id:require('node:crypto').randomUUID(),catalogId:entry.id,console:entry.console,path:file,name:entry.name});});},onProgress:progress=>{if(win&&!win.isDestroyed())win.webContents.send('download-progress',progress);}});
  win=new BrowserWindow({width:1440,height:900,minWidth:1000,minHeight:680,backgroundColor:'#0a0c10',autoHideMenuBar:true,webPreferences:{preload:path.join(__dirname,'preload.cjs'),contextIsolation:true,nodeIntegration:false,sandbox:true}});
  win.webContents.setWindowOpenHandler(()=>({action:'deny'}));win.webContents.on('will-navigate',e=>e.preventDefault());win.loadFile('index.html');
  // Keep the frontend alive while a game runs; closing a game returns to Kaliw.
@@ -19,6 +21,13 @@ app.whenReady().then(()=>{
 });
 app.on('window-all-closed',()=>{if(!session)app.quit();});
 ipcMain.handle('read',read);
+ipcMain.handle('catalog',(_,refresh)=>refresh?online.refresh():online.list());
+ipcMain.handle('download',async(_,id)=>{await online.download(id);return {config:await read(),catalog:await online.list()};});
+ipcMain.handle('download-cancel',(_,id)=>online.cancel(id));
+ipcMain.handle('scan-bios',async()=>{const result=await dialog.showOpenDialog(win,{title:'Pasta para procurar BIOS de PS1 e PS2',properties:['openDirectory']});if(result.canceled)return null;return online.scan(result.filePaths[0]);});
+ipcMain.handle('import-found-bios',async(_,id)=>{if(session||launching)throw Error('Feche o jogo antes de importar BIOS.');await online.importCandidate(id);return read();});
+ipcMain.handle('catalog-source',async(_,id)=>shell.openExternal(online.entry(id).source));
+ipcMain.handle('bios-guide',async()=>shell.openExternal('https://pcsx2.net/docs/setup/bios/'));
 ipcMain.handle('bios',async(_,id)=>{manager.check(id);if(session||launching)throw Error('Feche o jogo antes de importar BIOS.');const r=await dialog.showOpenDialog(win,{title:'Importar sua BIOS de '+id.toUpperCase(),filters:[{name:'BIOS descompactada',extensions:['bin']}],properties:['openFile','multiSelections']});if(r.canceled)return null;await manager.importBios(id,r.filePaths);return read();});
 ipcMain.handle('data-folder',async()=>{const folder=path.join(app.getPath('userData'),'emulation');await fs.mkdir(folder,{recursive:true});const error=await shell.openPath(folder);if(error)throw Error(error);});
 ipcMain.handle('licenses',async()=>{const folder=path.join(manager.bundle,'licenses');const error=await shell.openPath(folder);if(error)throw Error(error);});

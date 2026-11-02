@@ -1,10 +1,10 @@
-# KaliwLauncher 0.3
+# KaliwLauncher 0.4
 
 Aplicativo portátil para Windows x64 com interface Kaliw e emulação integrada de PlayStation e PlayStation 2. Não é necessário instalar PCSX2, DuckStation ou RetroArch separadamente.
 
 ## Testar
 
-Abra `dist/KaliwLauncher 0.3.0.exe`. Em **Ajustes**, importe suas BIOS descompactadas: PS1 em `.bin` de 512 KB, PS2 em `.bin` de 4 MB. Os arquivos são copiados para os dados do Kaliw. A validação inicial verifica tamanho e assinaturas; a identificação final de uma BIOS compatível é feita pelo núcleo. Use BIOS da região dos jogos para o boot completo.
+Abra `dist/KaliwLauncher 0.4.0.exe`. Em **Ajustes**, importe suas BIOS descompactadas: PS1 em `.bin` de 512 KB, PS2 em `.bin` de 4 MB. Na aba BIOS, também é possível escolher o download do OpenBIOS livre para PS1; ele possui abertura própria e compatibilidade variável. Os arquivos são copiados para os dados do Kaliw. A validação inicial verifica tamanho e assinaturas; a identificação final de uma BIOS compatível é feita pelo núcleo. Use BIOS da região dos jogos para o boot completo.
 
 Escolha o console, adicione seus jogos e selecione **Jogar agora**. Para PS1 com faixas BIN, importe o CUE correspondente. Os jogos permanecem na pasta original. O botão **Boot do console** inicia sem disco. **Exibir boot original antes dos jogos** controla o boot completo.
 
@@ -22,7 +22,7 @@ Os quatro temas, dois estilos de carrossel e níveis de animação continuam dis
 
 Runtime: RetroArch 1.22.2. PS1: SwanStation 1.0.0, commit `631f0fb31b809e0f889d7c551fe695788e39c1d3`. PS2: ParaLLEl PS2 (derivado de LRPS2/PCSX2), commit `38d3a83f4ecdec977d609ece8afcc527f5f68702`. Bibliotecas de suporte C++ Microsoft incluídas localmente. Créditos e textos de licença em **Ajustes → Créditos**. As DLLs dos núcleos e o runtime não foram modificados; o metadado `supports_no_game` foi alinhado à declaração efetiva dos núcleos.
 
-`dist/KaliwLauncher-0.3.0-sources.zip` contém o código Kaliw e arquivos-fonte das revisões dos projetos utilizados. Veja os READMEs e submódulos upstream para compilar esses projetos. O manifesto em `engines/manifest.json` registra URLs e SHA-256 dos pacotes utilizados. A preparação falha se os pacotes upstream mudarem de hash, exigindo revisão explícita de uma nova revisão.
+`dist/KaliwLauncher-0.4.0-sources.zip` contém o código Kaliw e arquivos-fonte das revisões dos projetos utilizados. Veja os READMEs e submódulos upstream para compilar esses projetos. O manifesto em `engines/manifest.json` registra URLs e SHA-256 dos pacotes utilizados. A preparação falha se os pacotes upstream mudarem de hash, exigindo revisão explícita de uma nova revisão.
 
 ## Desenvolvimento
 
@@ -38,3 +38,13 @@ Os motores devem existir em `engines/`. Os scripts de preparação estão em `sc
 ## Validação desta versão
 
 Verificadas sintaxe, interface, temas, restauração de preferências, importação/cópia estrutural de BIOS, caminhos de dados, opções de boot, carregamento nativo dos dois núcleos e tratamento de firmware ausente. Não foram fornecidos BIOS ou jogos reais, portanto gameplay, áudio em jogo, boots completos e compatibilidade de títulos ainda exigem validação com os arquivos do usuário. O desempenho depende do jogo, CPU e GPU. A abertura Kaliw é um vídeo original sem áudio de seis segundos, incluído no pacote.
+
+## Abas BIOS e Jogos (0.4)
+
+**BIOS:** mostra o estado de PS1 e PS2, permite importar arquivos locais, procurar BIOS numa pasta escolhida (até cinco níveis, 5.000 entradas e 100 resultados) e escolher o download do OpenBIOS. A busca só lista resultados; nada é importado sem escolha. Para PS2, há acesso à orientação oficial de extração; o catálogo não oferece BIOS Sony de terceiros.
+
+**Jogos:** Descobrir jogos lista apenas homebrew distribuído pelos autores para plataformas integradas. Catálogo inicial: Tetrade (PS1, MIT) e NIM (PS2, GPL-3.0). Minha biblioteca oculta plataformas sem motor integrado. Há filtros por plataforma e busca por nome. Para importar jogos próprios, selecione PS1 ou PS2 no filtro.
+
+Ao abrir uma aba, o Kaliw verifica a disponibilidade das fontes conhecidas, sem baixar conteúdo. Escolher download abre a ficha com versão, autor, licença, tamanho e origem. Apenas Baixar e instalar inicia a transferência. Há progresso e cancelamento; tamanho e SHA-256 são conferidos antes da instalação. Itens nunca são iniciados automaticamente. Os arquivos, as licenças e os links de fonte ficam em `emulation/downloads/`. Nenhuma URL arbitrária ou arquivo compactado é executado. O CUE do Tetrade é preparado automaticamente junto ao BIN. As versões do catálogo são fixadas e verificadas; a busca consulta esse catálogo inicial, não um índice irrestrito de ROMs comerciais na internet.
+
+Testes da 0.4: download e instalação dos três itens nas fontes reais, bloqueio de hash incorreto, cancelamento, busca local, confirmação de download e filtros de plataformas. Com OpenBIOS e a imagem de disco do Tetrade, foi conferida visualmente a tela inicial do jogo após 1.500 quadros. Áudio, comandos durante a partida, PS2 com BIOS real e compatibilidade de outros títulos não foram validados.

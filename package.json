@@ -1,15 +1,16 @@
 {
   "name": "kaliw-launcher",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "description": "KaliwLauncher — sua próxima dimensão de jogo",
   "main": "main.cjs",
   "scripts": {
     "start": "electron .",
-    "check": "node --check main.cjs && node --check preload.cjs && node --check renderer.js && node --check engine-manager.cjs",
+    "check": "node --check main.cjs && node --check preload.cjs && node --check renderer.js && node --check engine-manager.cjs && node --check online-manager.cjs && node --check online-ui.js",
     "dist": "electron-builder --win portable",
     "test:engines": "node scripts/test-engines.cjs",
-    "prepare:engines": "node scripts/prepare-engines.cjs && node scripts/prepare-notices.cjs && node scripts/prepare-vc-runtime.cjs"
+    "prepare:engines": "node scripts/prepare-engines.cjs && node scripts/prepare-notices.cjs && node scripts/prepare-vc-runtime.cjs",
+    "test:downloads": "node scripts/test-downloads.cjs"
   },
   "devDependencies": {
     "electron": "^44.9.1",
@@ -25,7 +26,10 @@
       "style.css",
       "renderer.js",
       "artifacts/Kaliw-boot.webm",
-      "engine-manager.cjs"
+      "engine-manager.cjs",
+      "catalog.cjs",
+      "online-manager.cjs",
+      "online-ui.js"
     ],
     "win": {
       "target": "portable"
