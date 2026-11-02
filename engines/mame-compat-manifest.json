@@ -1,0 +1,10 @@
+{
+  "version": "0.174",
+  "engine": "MAME",
+  "url": "https://github.com/mamedev/mame/releases/download/mame0174/mame0174b_64bit.exe",
+  "downloadSha256": "953d01d2bf7bb086e2aaa086c7cac2e37f0ff05efe6d4dcaddefdd2a180926aa",
+  "sourceUrl": "https://github.com/mamedev/mame/releases/download/mame0174/mame0174s.zip",
+  "sourceArchive": "MAME-mame0174.zip",
+  "sourceSha256": "b9b1a65e855b055b0b6b262a7644d2b9a57c73541c55ee9eb60158508348a6fd",
+  "sha256": "6d77c4d45091366973f9c108bd4c3fcf9251bdb94a755d8cb61a400be939e5a8"
+}

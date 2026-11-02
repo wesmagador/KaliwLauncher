@@ -14,7 +14,7 @@ const line = (key,value) => `${key} = ${quote(value)}`;
 
 class EngineManager {
 
- constructor(bundle,data){this.bundle=bundle;this.data=data;this.system=path.join(data,'system');this.modern=new (require('./modern-manager.cjs').ModernManager)(bundle,data);}
+ constructor(bundle,data){this.bundle=bundle;this.data=data;this.system=path.join(data,'system');this.arcade=new (require('./arcade-manager.cjs').ArcadeManager)(bundle,data);this.modern=new (require('./modern-manager.cjs').ModernManager)(bundle,data);}
 
  check(id){if(!engines[id])throw Error('Console inválido');return engines[id];}
 
@@ -66,7 +66,7 @@ class EngineManager {
 
  }
 
- async prepare(id,game,fullboot,preferences={}){const engine=this.check(id);if(engine.modern)return this.modern.prepare(id,game,preferences);const status=(await this.status())[id];if(!status.available)throw Error('Motor integrado ausente. Use o pacote completo do Kaliw.');if(engine.bios&&!status.bios.length)throw Error(`Importe sua BIOS de ${id.toUpperCase()} no menu BIOS antes de jogar.`);
+ async prepare(id,game,fullboot,preferences={}){const engine=this.check(id);if(engine.modern)return this.modern.prepare(id,game,preferences);const status=(await this.status())[id];const arcade=id==='mame'&&game?await this.arcade.prepare(game.path,preferences):null;if(!status.available)throw Error('Motor integrado ausente. Use o pacote completo do Kaliw.');if(engine.bios&&!status.bios.length)throw Error(`Importe sua BIOS de ${id.toUpperCase()} no menu BIOS antes de jogar.`);
 
  if(!game&&!engine.boot)throw Error('Escolha um jogo desta plataforma na aba Jogos.');
 
@@ -82,7 +82,7 @@ class EngineManager {
 
  if(chosen&&!status.bios.includes(chosen))throw Error('A BIOS selecionada não está disponível. Escolha outra no menu BIOS.');
 
- let system=this.system;const env={KALIW_PS1_BIOS:'',KALIW_PS2_BIOS:'',KALIW_CORE:path.join(this.bundle,'cores',engine.file),KALIW_BRIDGE:path.join(base,'ipc-'+crypto.randomUUID())};
+ let system=this.system;const env={KALIW_PS1_BIOS:'',KALIW_PS2_BIOS:'',KALIW_CORE:arcade?.core||path.join(this.bundle,'cores',engine.file),KALIW_BRIDGE:path.join(base,'ipc-'+crypto.randomUUID())};
 
  if(id==='ps1'&&chosen){system=path.join(base,'firmware');await fs.mkdir(system,{recursive:true});await fs.copyFile(path.join(this.system,chosen),path.join(system,'psxonpsp660.bin'));env.KALIW_PS1_BIOS='psxonpsp660.bin';}
 
@@ -120,9 +120,10 @@ class EngineManager {
 
  const log=path.join(logs,`${id}-${Date.now()}.log`);
 
- const args=['--config',configPath,'--verbose','--log-file',log,'--fullscreen','-L',path.join(this.bundle,'cores','kaliw_discbridge_libretro.dll')];if(game)args.push(game.path);
+ const args=['--config',configPath,'--verbose','--log-file',log,'--fullscreen','-L',path.join(this.bundle,'cores','kaliw_discbridge_libretro.dll')];if(game)args.push(arcade?.gamePath||game.path);
 
- return {exe:path.join(this.bundle,'retroarch.exe'),args,cwd:id==='ps2'?base:this.bundle,log,env,bridge:env.KALIW_BRIDGE,bios:engine.bios?(chosen||'auto'):'none'};
+ if(arcade?.native){return {exe:path.join(this.bundle,'kaliw-engine-host.exe'),args:[arcade.exe,...arcade.args],cwd:arcade.cwd,engine:arcade.name,log,env,bridge:env.KALIW_BRIDGE,bios:'none',modern:true,identity:arcade.exe,saveStates:false};}
+ return {exe:path.join(this.bundle,'retroarch.exe'),args,cwd:arcade?.cwd||(id==='ps2'?base:this.bundle),engine:arcade?.name||engine.name,log,env,bridge:env.KALIW_BRIDGE,bios:engine.bios?(chosen||'auto'):'none'};
 
  }
 

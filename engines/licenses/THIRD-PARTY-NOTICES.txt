@@ -112,3 +112,13 @@ Licenses: cemu-LICENSE.txt
 Dolphin Data/Sys is copied from the same pinned source archive and distributed with its original licenses. MAME 2003-Plus is a legacy MAME core; consult its non-commercial license conditions. GPL/MPL and dependency notices are preserved in each source archive. Build the relevant libretro targets following each source README/Makefile and its pinned submodule revisions. Cemu native version reports its base revision separately from the libretro port revision.
 
 yauzl 3.4.0 and pend 1.2.0 (MIT) read the bundled Dolphin Sys archive on first Wii use. Their LICENSE files are preserved inside the application dependencies and source bundle. The archive is checked against dolphin-assets.json before extraction.
+
+
+MAME Windows 0.174 (additional arcade motor)
+Official upstream: https://github.com/mamedev/mame/releases/download/mame0174/mame0174b_64bit.exe
+Original package SHA256: 953d01d2bf7bb086e2aaa086c7cac2e37f0ff05efe6d4dcaddefdd2a180926aa
+Redistributed runtime ZIP SHA256: 6d77c4d45091366973f9c108bd4c3fcf9251bdb94a755d8cb61a400be939e5a8
+Sources: https://github.com/mamedev/mame/releases/download/mame0174/mame0174s.zip
+Source archive: MAME-mame0174.zip
+Source SHA256: b9b1a65e855b055b0b6b262a7644d2b9a57c73541c55ee9eb60158508348a6fd
+License: GPL version 2 or later and file-specific licenses; see engines/licenses/mame0174/LICENSE.md and the complete official source archive. No game ROMs or commercial BIOS included.

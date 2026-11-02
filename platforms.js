@@ -162,17 +162,17 @@
     },
     {
       "id": "mame",
-      "name": "MAME 2003-Plus",
+      "name": "MAME / Arcade",
       "symbol": "MAME",
       "year": "1978",
       "vendor": "Arcade",
       "core": "mame2003_plus",
-      "engine": "MAME 2003-Plus",
+      "engine": "MAME · automático",
       "extensions": [
         "zip"
       ],
       "repo": "libretro/mame2003-plus-libretro",
-      "description": "Arcades clássicos. Requer ROMsets compatíveis com MAME 2003-Plus.",
+      "description": "Arcades clássicos. Seleção automática entre MAME 2003-Plus e MAME 0.174 conforme o conjunto de ROMs.",
       "console": "mame",
       "file": "mame2003_plus_libretro.dll"
     },
